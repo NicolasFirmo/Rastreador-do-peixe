@@ -5,30 +5,31 @@
 using namespace cv;
 using namespace std;
 
-bool detectarpeixe(Mat a, Mat b) {
-  for (int i = 70; i < 370; i++) {
-    for (int j = 290; j < 590; j++) {
+Mat detectarpeixe(Mat a, Mat b) {
+  Mat aux = b.clone();
+  for (int i = 0; i < a.rows; i++) {
+    for (int j = 0; j < a.cols; j++) {
       // parâmetros de decisão:
       // de acordo com as observações até o momento os melhores
       // valores para o exemplo em questão foram de 70 para valor
       // da máscara e 120 para o valor do canal azul da cor do peixe
-      if ((a.at<uchar>(i,j) > 70) && (b.at<Vec3b>(i,j)(3) < 120)) {
+      if ((a.at<Vec3b>(i,j)(1) > 50) && (b.at<Vec3b>(i,j)(3) < 120)) {
         for (int v = -10; v < 10; v++) {
-          b.at<Vec3b>(i+v,j) = {0,0,255};
-          b.at<Vec3b>(i,j+v) = {0,0,255};
+          aux.at<Vec3b>(i+v,j) = {0,0,255};
+          aux.at<Vec3b>(i,j+v) = {0,0,255};
         }
-        return true;
+        return aux;
       }
     }
   }
-  return false;
+  return aux;
 }
 
 int main(int argc, char** argv){
-  bool d0 = false, d1 = false; //flags para avisar se o está dentro ou fora de detecção
-  VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
+  //VideoCapture cap("lado_limpo.avi"); // arquivo de vídeo ou imagem da webcam
+    VideoCapture cap("Exemplo/cima.wmv");
   char key;
-  Mat video, videoaux, img, bg, auxbg ,mov;
+  Mat video, bg, mov,mov_aux,mov_ant;
   bool p = false;
 
   if(!cap.isOpened()){
@@ -51,53 +52,43 @@ int main(int argc, char** argv){
   // bg.convertTo(bg, CV_8U);
 
   cap >> video;
-  cvtColor(video, videoaux, CV_BGR2GRAY);
-  videoaux.convertTo(videoaux, CV_8U);
-  bg = videoaux.clone();
+  bg = video.clone();
 
   while (true) {
     cap >> video;
-    cvtColor(video, img, CV_BGR2GRAY);
-    img.convertTo(img, CV_8U);
-    absdiff(bg, img, mov);
+    absdiff(bg, video, mov);
 
     // desenha na tela um quadrado representando a seção de rastreamento
-    for (int i = 1; i < 300; i++) {
-      video.at<Vec3b>(70+i,290) = {255,0,000};
-      video.at<Vec3b>(70,290+i) = {255,0,000};
-      video.at<Vec3b>(370,290+i) = {255,0,000};
-      video.at<Vec3b>(70+i,590) = {255,0,000};
-    }
+    // for (int i = 1; i < 300; i++) {
+    //   video.at<Vec3b>(70+i,290) = {255,0,000};
+    //   video.at<Vec3b>(70,290+i) = {255,0,000};
+    //   video.at<Vec3b>(370,290+i) = {255,0,000};
+    //   video.at<Vec3b>(70+i,590) = {255,0,000};
+    // }
 
     key = (char) waitKey(10);
     if( key == 27 ) break; // pressionar esc para sair
 
-    d0 = detectarpeixe(mov, video);
-    if (d0 != d1) {
-      d1 = d0;
-      if (d0) {
-        cout << "Peixe visto" << '\n';
-      } else {
-        cout << "Peixe desvisto" << '\n';
-      }
-    }
+    // d0 = detectarpeixe(mov, video);
+    // if (d0 != d1) {
+    //   d1 = d0;
+    //   if (d0) {
+    //     cout << "Peixe visto" << '\n';
+    //   } else {
+    //     cout << "Peixe desvisto" << '\n';
+    //   }
+    // }
 
-    imshow("video", video);
+    imshow("video", detectarpeixe(mov, video));
     imshow("mascara", mov);
 
     if(i%100==0){
-      videoaux = img.clone();
       if(p){
-        absdiff(auxbg,mov,img);
-        for (int k = 0; k < bg.rows; k++) {
-          for (int l = 0; l < bg.cols; l++) {
-            if (img.at<uchar>(k,l) < 5) {
-              bg.at<uchar>(k,l) = videoaux.at<uchar>(k,l);
-            }
-          }
-        }
+        absdiff(mov_ant,mov,mov_aux);
+        threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
+        video.copyTo(bg, mov_aux);
       }
-      auxbg = mov.clone();
+      mov_ant = mov.clone();
       p = true;
     }
 
