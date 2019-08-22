@@ -1,36 +1,85 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <string>
+#include <iomanip>
 
 using namespace cv;
 using namespace std;
 
-Mat detectarpeixe(Mat a, Mat b) {
-  Mat aux = b.clone();
-  for (int i = 0; i < a.rows; i++) {
-    for (int j = 0; j < a.cols; j++) {
+int mask_t = 40;
+int peixe_V = 85;
+int peixe_OS = 20;
+
+Point detectarpeixe(Mat a, Mat b, Rect* reg) {
+  for (int i = reg->tl().x; i < reg->br().x; i++) {
+    for (int j = reg->tl().y; j < reg->br().y; j++) {
       // parâmetros de decisão:
       // de acordo com as observações até o momento os melhores
       // valores para o exemplo em questão foram de 70 para valor
       // da máscara e 120 para o valor do canal azul da cor do peixe
-      if ((a.at<Vec3b>(i,j)(1) > 50) && (b.at<Vec3b>(i,j)(3) < 120)) {
-        for (int v = -10; v < 10; v++) {
-          aux.at<Vec3b>(i+v,j) = {0,0,255};
-          aux.at<Vec3b>(i,j+v) = {0,0,255};
-        }
-        return aux;
+      if ((a.at<Vec3b>(i,j)(0) > mask_t &&
+      a.at<Vec3b>(i,j)(1) > mask_t &&
+      a.at<Vec3b>(i,j)(2) > mask_t &&
+      b.at<Vec3b>(i,j)(1) < (peixe_V + peixe_OS)) &&
+      b.at<Vec3b>(i,j)(1) > (peixe_V - peixe_OS)) {
+        reg->width = 100;
+        reg->height = 100;
+        reg->x = (i - 50) < 0 ? 0 : (i - 50);
+        reg->y = (j - 50) < 0 ? 0 : (j  - 50);
+        return Point(i,j);
       }
     }
   }
-  return aux;
+  return Point(0,0);
+}
+
+void desenha_cruz(Point c, Mat a){
+  for (int v = -10; v < 10; v++) {
+    a.at<Vec3b>(c.x+v,c.y) = {0,0,255};
+    a.at<Vec3b>(c.x,c.y+v) = {0,0,255};
+  }
+}
+
+
+void desenha_regiao(Rect* reg, Mat a){
+  for (int i = reg->tl().x; i < reg->br().x; i++){
+    a.at<Vec3b>(i,reg->tl().y) = {255,0,255};
+    a.at<Vec3b>(i,reg->br().y) = {255,0,255};
+  }
+
+  for (int j = reg->tl().y; j < reg->br().y; j++) {
+    a.at<Vec3b>(reg->tl().x,j) = {255,0,255};
+    a.at<Vec3b>(reg->br().x,j) = {255,0,255};
+
+  }
+}
+
+void desenha_regiaoblue(Rect* reg, Mat a){
+  for (int i = reg->tl().x; i < reg->br().x; i++){
+    a.at<Vec3b>(i,reg->tl().y) = {255,0,0};
+    a.at<Vec3b>(i,reg->br().y) = {255,0,0};
+  }
+
+  for (int j = reg->tl().y; j < reg->br().y; j++) {
+    a.at<Vec3b>(reg->tl().x,j) = {255,0,0};
+    a.at<Vec3b>(reg->br().x,j) = {255,0,0};
+
+  }
 }
 
 int main(int argc, char** argv){
-  //VideoCapture cap("lado_limpo.avi"); // arquivo de vídeo ou imagem da webcam
-    VideoCapture cap("Exemplo/cima.wmv");
+  cout << fixed;
+  cout << setprecision(2);
+  // VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
+  VideoCapture cap("Video 177.wmv");
   char key;
   Mat video, bg, mov,mov_aux,mov_ant;
   bool p = false;
+  Point peixe;
+  Rect r1(13,281,240,80);
+  Rect r2(259,23,80,250);
+  Rect r3(259,366,80,250);
+  double t1 = 0, t2 = 0, t3 = 0;
 
   if(!cap.isOpened()){
     cap.open(0);
@@ -41,7 +90,9 @@ int main(int argc, char** argv){
   }
 
   namedWindow("video",1);
+  moveWindow("video", 700,20);
   namedWindow("mascara",1);
+  moveWindow("mascara", 20,20);
 
   // trecho para fazer o salvamento periódico de imagens
   int i=0, j=0;
@@ -53,20 +104,15 @@ int main(int argc, char** argv){
 
   cap >> video;
   bg = video.clone();
+  Rect regiao(0,0,video.rows,video.cols);
+  Rect atbg(0,0,100,100);
+  // Rect regiao(10,10,200,300);
 
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
 
-    // desenha na tela um quadrado representando a seção de rastreamento
-    // for (int i = 1; i < 300; i++) {
-    //   video.at<Vec3b>(70+i,290) = {255,0,000};
-    //   video.at<Vec3b>(70,290+i) = {255,0,000};
-    //   video.at<Vec3b>(370,290+i) = {255,0,000};
-    //   video.at<Vec3b>(70+i,590) = {255,0,000};
-    // }
-
-    key = (char) waitKey(10);
+    key = (char) waitKey(30);
     if( key == 27 ) break; // pressionar esc para sair
 
     // d0 = detectarpeixe(mov, video);
@@ -79,17 +125,43 @@ int main(int argc, char** argv){
     //   }
     // }
 
-    imshow("video", detectarpeixe(mov, video));
-    imshow("mascara", mov);
-
-    if(i%100==0){
+    if(i == 100 || !atbg.contains(peixe)){
       if(p){
         absdiff(mov_ant,mov,mov_aux);
         threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
         video.copyTo(bg, mov_aux);
       }
       mov_ant = mov.clone();
+      atbg.x = regiao.x;
+      atbg.y = regiao.y;
       p = true;
+      i = 0;
+    }
+
+    if (r1.contains(peixe)) {
+      t1++;
+    } else if (r2.contains(peixe)) {
+      t2++;
+    } else if (r3.contains(peixe)) {
+      t3++;
+    }
+
+    cout<<"tempo em cima: "<<t1/30<<"s | tempo na esquerda: "<<t2/30<<"s | tempo na direita: "<<t3/30<<"s\n";
+
+    peixe = detectarpeixe(mov, video, &regiao);
+    desenha_cruz(peixe, video);
+    desenha_regiao(&regiao, video);
+    desenha_regiao(&atbg, video);
+    desenha_regiaoblue(&r1, video);
+    desenha_regiaoblue(&r2, video);
+    desenha_regiaoblue(&r3, video);
+
+    imshow("mascara", mov);
+    imshow("video", video);
+
+    if(peixe.x == 0){
+      cout<<"perdeu o peixe";
+      regiao = Rect(0,0,video.rows,video.cols);
     }
 
     //salva imagens periodicamente
