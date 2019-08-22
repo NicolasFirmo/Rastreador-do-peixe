@@ -9,8 +9,9 @@ using namespace std;
 int mask_t = 40;
 int peixe_V = 85;
 int peixe_OS = 20;
+int det_tam = 30;
 
-Point detectarpeixe(Mat a, Mat b, Rect* reg) {
+void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
   for (int i = reg->tl().x; i < reg->br().x; i++) {
     for (int j = reg->tl().y; j < reg->br().y; j++) {
       // parâmetros de decisão:
@@ -20,17 +21,21 @@ Point detectarpeixe(Mat a, Mat b, Rect* reg) {
       if ((a.at<Vec3b>(i,j)(0) > mask_t &&
       a.at<Vec3b>(i,j)(1) > mask_t &&
       a.at<Vec3b>(i,j)(2) > mask_t &&
-      b.at<Vec3b>(i,j)(1) < (peixe_V + peixe_OS)) &&
-      b.at<Vec3b>(i,j)(1) > (peixe_V - peixe_OS)) {
-        reg->width = 100;
-        reg->height = 100;
-        reg->x = (i - 50) < 0 ? 0 : (i - 50);
-        reg->y = (j - 50) < 0 ? 0 : (j  - 50);
-        return Point(i,j);
+      b.at<Vec3b>(i,j)(0) < (peixe_V + peixe_OS)) &&
+      b.at<Vec3b>(i,j)(0) > (peixe_V - peixe_OS)) {
+        reg->width = det_tam;
+        reg->height = det_tam;
+        reg->x = (i - det_tam/2) < 0 ? 0 : (i -  det_tam/2);
+        reg->y = (j - det_tam/2) < 0 ? 0 : (j  -  det_tam/2);
+        *p = Point(i,j);
+        return;
       }
     }
   }
-  return Point(0,0);
+  // *reg = Rect(0,0,a.rows,a.cols);
+  *reg = Rect(p->x-50,p->y-50,100,100);
+  // *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 40,reg->height + 40);
+  return;
 }
 
 void desenha_cruz(Point c, Mat a){
@@ -92,7 +97,9 @@ int main(int argc, char** argv){
   namedWindow("video",1);
   moveWindow("video", 700,20);
   namedWindow("mascara",1);
-  moveWindow("mascara", 20,20);
+  moveWindow("mascara", 20,350);
+  namedWindow("rastro",1);
+  moveWindow("rastro", 20,20);
 
   // trecho para fazer o salvamento periódico de imagens
   int i=0, j=0;
@@ -104,15 +111,20 @@ int main(int argc, char** argv){
 
   cap >> video;
   bg = video.clone();
-  Rect regiao(0,0,video.rows,video.cols);
-  Rect atbg(0,0,100,100);
-  // Rect regiao(10,10,200,300);
+  Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
+  // Rect regiao(0,0,video.rows,video.cols);
+  Rect regiao(63,300,200,300);
+  Rect atbg(0,0,det_tam,det_tam);
+  desenha_regiaoblue(&r1, rastro);
+  desenha_regiaoblue(&r2, rastro);
+  desenha_regiaoblue(&r3, rastro);
 
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
+    rastro.at<Vec3b>(peixe.x,peixe.y) = {0,255,255};
 
-    key = (char) waitKey(30);
+    key = (char) waitKey(20);
     if( key == 27 ) break; // pressionar esc para sair
 
     // d0 = detectarpeixe(mov, video);
@@ -146,9 +158,9 @@ int main(int argc, char** argv){
       t3++;
     }
 
-    cout<<"tempo em cima: "<<t1/30<<"s | tempo na esquerda: "<<t2/30<<"s | tempo na direita: "<<t3/30<<"s\n";
+    cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s\n";
 
-    peixe = detectarpeixe(mov, video, &regiao);
+    detectarpeixe(mov, video, &regiao, &peixe);
     desenha_cruz(peixe, video);
     desenha_regiao(&regiao, video);
     desenha_regiao(&atbg, video);
@@ -156,13 +168,11 @@ int main(int argc, char** argv){
     desenha_regiaoblue(&r2, video);
     desenha_regiaoblue(&r3, video);
 
+    // rastro.copyTo(video, rastro);
+
     imshow("mascara", mov);
     imshow("video", video);
-
-    if(peixe.x == 0){
-      cout<<"perdeu o peixe";
-      regiao = Rect(0,0,video.rows,video.cols);
-    }
+    imshow("rastro", rastro);
 
     //salva imagens periodicamente
     // if(i%60==0){
