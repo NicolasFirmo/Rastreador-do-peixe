@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
 #include <opencv2/opencv.hpp>
 #include <string>
 #include <iomanip>
@@ -81,109 +83,132 @@ int main(int argc, char** argv){
   Mat video, bg, mov,mov_aux,mov_ant;
   bool p = false;
   Point peixe;
+  Point trjt [100];
   Rect r1(13,281,240,80);
   Rect r2(259,23,80,250);
   Rect r3(259,366,80,250);
-  double t1 = 0, t2 = 0, t3 = 0;
+  double t1 = 0, t2 = 0, t3 = 0, t=0;
+  ofstream outdata; // outdata is like cin
+    outdata << fixed;
+    outdata << setprecision(2);
 
+  outdata.open("dados.txt"); // opens the file
+
+  if( !outdata ) { // file couldn't be opened
+  cerr << "Error: file could not be opened" << endl;
+  exit(1);
+}
+
+if(!cap.isOpened()){
+  cap.open(0);
   if(!cap.isOpened()){
-    cap.open(0);
-    if(!cap.isOpened()){
-      cout << "cameras indisponiveis";
-      return -1;
-    }
+    cout << "cameras indisponiveis";
+    return -1;
   }
+}
 
-  namedWindow("video",1);
-  moveWindow("video", 700,20);
-  namedWindow("mascara",1);
-  moveWindow("mascara", 20,350);
-  namedWindow("rastro",1);
-  moveWindow("rastro", 20,20);
+namedWindow("video",1);
+moveWindow("video", 700,20);
+namedWindow("mascara",1);
+moveWindow("mascara", 20,350);
+namedWindow("rastro",1);
+moveWindow("rastro", 20,20);
 
-  // trecho para fazer o salvamento periódico de imagens
-  int i=0, j=0;
-  string nome = ".png";
+// trecho para fazer o salvamento periódico de imagens
+int i=0, j=0;
+string nome = ".png";
 
-  //carregamento de imagem de background [obsoleto depois do v1.1]
-  // cvtColor(imread("cimabg.png",CV_BGR2GRAY), bg, CV_BGR2GRAY); // imagem de fundo
-  // bg.convertTo(bg, CV_8U);
+//carregamento de imagem de background [obsoleto depois do v1.1]
+// cvtColor(imread("cimabg.png",CV_BGR2GRAY), bg, CV_BGR2GRAY); // imagem de fundo
+// bg.convertTo(bg, CV_8U);
 
+cap >> video;
+bg = video.clone();
+Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
+// Rect regiao(0,0,video.rows,video.cols);
+Rect regiao(63,300,200,300);
+Rect atbg(0,0,det_tam,det_tam);
+desenha_regiaoblue(&r1, rastro);
+desenha_regiaoblue(&r2, rastro);
+desenha_regiaoblue(&r3, rastro);
+
+while (true) {
   cap >> video;
-  bg = video.clone();
-  Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
-  // Rect regiao(0,0,video.rows,video.cols);
-  Rect regiao(63,300,200,300);
-  Rect atbg(0,0,det_tam,det_tam);
-  desenha_regiaoblue(&r1, rastro);
-  desenha_regiaoblue(&r2, rastro);
-  desenha_regiaoblue(&r3, rastro);
+  absdiff(bg, video, mov);
+  rastro.at<Vec3b>(peixe.x,peixe.y) = {0,255,255};
 
-  while (true) {
-    cap >> video;
-    absdiff(bg, video, mov);
-    rastro.at<Vec3b>(peixe.x,peixe.y) = {0,255,255};
-
-    key = (char) waitKey(20);
-    if( key == 27 ) break; // pressionar esc para sair
-
-    // d0 = detectarpeixe(mov, video);
-    // if (d0 != d1) {
-    //   d1 = d0;
-    //   if (d0) {
-    //     cout << "Peixe visto" << '\n';
-    //   } else {
-    //     cout << "Peixe desvisto" << '\n';
-    //   }
-    // }
-
-    if(i == 100 || !atbg.contains(peixe)){
-      if(p){
-        absdiff(mov_ant,mov,mov_aux);
-        threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
-        video.copyTo(bg, mov_aux);
-      }
-      mov_ant = mov.clone();
-      atbg.x = regiao.x;
-      atbg.y = regiao.y;
-      p = true;
-      i = 0;
-    }
-
-    if (r1.contains(peixe)) {
-      t1++;
-    } else if (r2.contains(peixe)) {
-      t2++;
-    } else if (r3.contains(peixe)) {
-      t3++;
-    }
-
-    cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s\n";
-
-    detectarpeixe(mov, video, &regiao, &peixe);
-    desenha_cruz(peixe, video);
-    desenha_regiao(&regiao, video);
-    desenha_regiao(&atbg, video);
-    desenha_regiaoblue(&r1, video);
-    desenha_regiaoblue(&r2, video);
-    desenha_regiaoblue(&r3, video);
-
-    // rastro.copyTo(video, rastro);
-
-    imshow("mascara", mov);
-    imshow("video", video);
-    imshow("rastro", rastro);
-
-    //salva imagens periodicamente
-    // if(i%60==0){
-    //   nome = ".png";
-    //   nome.insert(0,to_string(j));
-    //   imwrite(nome, img);
-    //   j++;
-    // }
-
-    i++;
+  key = (char) waitKey(20);
+  if( key == 27 ){
+    outdata.close();
+    break; // pressionar esc para sair
   }
 
-  return 0;
+  // d0 = detectarpeixe(mov, video);
+  // if (d0 != d1) {
+  //   d1 = d0;
+  //   if (d0) {
+  //     cout << "Peixe visto" << '\n';
+  //   } else {
+  //     cout << "Peixe desvisto" << '\n';
+  //   }
+  // }
+
+  if(i == 100 || !atbg.contains(peixe)){
+
+    if(p){
+      absdiff(mov_ant,mov,mov_aux);
+      threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
+      video.copyTo(bg, mov_aux);
+    }
+
+    for (int j = 0; j < i; j++) { //salva no arquivo
+      outdata << trjt[j].y<< " " << trjt[j].x<< " " << (t+j-i)/40 << endl;
+    }
+
+    mov_ant = mov.clone();
+    atbg.x = regiao.x;
+    atbg.y = regiao.y;
+    p = true;
+    i = 0;
+  }
+
+  if (r1.contains(peixe)) {
+    t1++;
+  } else if (r2.contains(peixe)) {
+    t2++;
+  } else if (r3.contains(peixe)) {
+    t3++;
+  }
+
+  cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s\n";
+
+  detectarpeixe(mov, video, &regiao, &peixe);
+  desenha_cruz(peixe, video);
+  desenha_regiao(&regiao, video);
+  desenha_regiao(&atbg, video);
+  desenha_regiaoblue(&r1, video);
+  desenha_regiaoblue(&r2, video);
+  desenha_regiaoblue(&r3, video);
+
+  // rastro.copyTo(video, rastro);
+
+  imshow("mascara", mov);
+  imshow("video", video);
+  imshow("rastro", rastro);
+
+  trjt[i] = peixe;
+
+  //salva imagens periodicamente
+  // if(i%60==0){
+  //   nome = ".png";
+  //   nome.insert(0,to_string(j));
+  //   imwrite(nome, img);
+  //   j++;
+  // }
+
+  i++;
+  t++;
+}
+
+return 0;
 }
