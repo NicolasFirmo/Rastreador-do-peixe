@@ -16,8 +16,8 @@ struct Dado {
 
 #define mask_t 35
 #define peixe_V 85
-#define peixe_OS 30
-#define det_tam 20
+#define peixe_OS 40
+#define det_tam 40
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
@@ -31,7 +31,6 @@ int main(int argc, char** argv){
   char key;
   Mat video, bg, mov,mov_aux,mov_ant;
   bool p = false;
-  Point peixe;
   Dado trjt[100];
   Rect interesse[2];
   interesse[0] = Rect(23,259,600,80);
@@ -73,12 +72,14 @@ int main(int argc, char** argv){
   cap >> video;
   bg = video.clone();
   Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
-  // Rect regiao(0,0,video.cols,video.rows);
-  Rect regiao(300,66,200,300);
-  Rect atbg(0,0,det_tam,det_tam);
+  Rect regiao(video.cols-det_tam/2,video.rows-det_tam/2,det_tam,det_tam);
+  Rect atbg(video.cols-det_tam/2,video.rows-det_tam/2,det_tam,det_tam);
+  // Rect regiao(300,66,80,80);
+  // Rect atbg(300,66,80,80);
   desenha_regiao(&r1, rastro, {255,0,0});
   desenha_regiao(&r2, rastro, {255,0,0});
   desenha_regiao(&r3, rastro, {255,0,0});
+  Point peixe(video.cols/2,video.rows/2);
 
   while (true) {
     cap >> video;
@@ -133,9 +134,9 @@ int main(int argc, char** argv){
     imshow("rastro", rastro);
 
     if(i>0){vel_at = sqrt(pow(trjt[i].pos.x-trjt[i-1].pos.x,2)+pow(trjt[i].pos.y-trjt[i-1].pos.y,2))/(trjt[i-1].tempo-trjt[i].tempo);}
-    vel = vel<vel_at ? vel_at : vel;
+    vel = (vel<vel_at && vel_at<500)  ? vel_at : vel;
 
-    cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at/10<<endl;
+    cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
     trjt[i].pos = peixe;
     trjt[i].tempo = t/40;
@@ -149,6 +150,9 @@ int main(int argc, char** argv){
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
 
+  int soma = 0;
+  Point loc(0,0);
+
   threshold(a,a,mask_t,255,THRESH_BINARY);
   GaussianBlur( a, a, Size( 3, 3 ), 0, 0 );
 
@@ -158,25 +162,42 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       // de acordo com as observações até o momento os melhores
       // valores para o exemplo em questão foram de 70 para valor
       // da máscara e 120 para o valor do canal azul da cor do peixe
-      if ((a.at<Vec3b>(i,j)(0) > 160 &&
-      a.at<Vec3b>(i,j)(1) > 160 &&
-      a.at<Vec3b>(i,j)(2) > 160 &&
+      if ((a.at<Vec3b>(i,j)(0) > 40 &&
+      a.at<Vec3b>(i,j)(1) > 40 &&
+      a.at<Vec3b>(i,j)(2) > 40 &&
       b.at<Vec3b>(i,j)(0) < (peixe_V + peixe_OS)) &&
       b.at<Vec3b>(i,j)(0) > (peixe_V - peixe_OS))
       {
-        reg->width = det_tam;
-        reg->height = det_tam;
-        reg->x = (j - det_tam/2) < 0 ? 0 : (j -  det_tam/2);
-        reg->y = (i - det_tam/2) < 0 ? 0 : (i  -  det_tam/2);
-        *p = Point(j,i);
-        return;
+        if (loc == Point(0,0)) {
+          loc = Point(j,i);
+          soma = 1;
+        }else{
+          loc.x += j*(a.at<Vec3b>(i,j)(0)+a.at<Vec3b>(i,j)(1)+a.at<Vec3b>(i,j)(2));
+          loc.y += i*(a.at<Vec3b>(i,j)(0)+a.at<Vec3b>(i,j)(1)+a.at<Vec3b>(i,j)(2));
+          soma+=(a.at<Vec3b>(i,j)(0)+a.at<Vec3b>(i,j)(1)+a.at<Vec3b>(i,j)(2));
+        }
       }
     }
   }
-  *reg = Rect(0,0,a.cols,a.rows);
+  cout << "soma: " << soma << " ";
+
+  if (loc == Point(0,0) || soma < 1200) {
+  // *reg = Rect(0,0,a.cols,a.rows);
   // *reg = Rect(p->x-50,p->y-50,100,100);
-  // *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 40,reg->height + 40);
+  *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 25,reg->height + 25);
   return;
+  }
+
+  reg->width = det_tam;
+  reg->height = det_tam;
+  p->x = loc.x/soma < a.cols ? loc.x/soma : a.cols/2;
+  p->y = loc.y/soma < a.rows ? loc.y/soma : a.rows/2;
+  reg->x = (p->x - det_tam/2) < 0 ? 0 : (p->x -  det_tam/2);
+  reg->x = (p->x + det_tam/2) >= a.cols ? a.cols - det_tam - 1: (p->x -  det_tam/2);
+  reg->y = (p->y - det_tam/2) < 0 ? 0 : (p->y  -  det_tam/2);
+  reg->y = (p->y + det_tam/2) >= a.rows ? a.rows - det_tam - 1: (p->y -  det_tam/2);
+  return;
+
 }
 
 void desenha_cruz(Point c, Mat a, Vec3b cor){
