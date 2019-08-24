@@ -14,10 +14,10 @@ struct Dado {
   float tempo;
 };
 
-#define mask_t 25
+#define mask_t 35
 #define peixe_V 85
-#define peixe_OS 50
-#define det_tam 30
+#define peixe_OS 30
+#define det_tam 20
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
@@ -150,7 +150,7 @@ int main(int argc, char** argv){
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
 
   threshold(a,a,mask_t,255,THRESH_BINARY);
-  GaussianBlur( a, a, Size( 5, 5 ), 1, 1 );
+  GaussianBlur( a, a, Size( 3, 3 ), 0, 0 );
 
   for (int i = reg->tl().y; i < reg->br().y; i++) {
     for (int j = reg->tl().x; j < reg->br().x; j++) {
@@ -158,9 +158,9 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       // de acordo com as observações até o momento os melhores
       // valores para o exemplo em questão foram de 70 para valor
       // da máscara e 120 para o valor do canal azul da cor do peixe
-      if ((a.at<Vec3b>(i,j)(0) > 180 &&
-      a.at<Vec3b>(i,j)(1) > 180 &&
-      a.at<Vec3b>(i,j)(2) > 180 &&
+      if ((a.at<Vec3b>(i,j)(0) > 160 &&
+      a.at<Vec3b>(i,j)(1) > 160 &&
+      a.at<Vec3b>(i,j)(2) > 160 &&
       b.at<Vec3b>(i,j)(0) < (peixe_V + peixe_OS)) &&
       b.at<Vec3b>(i,j)(0) > (peixe_V - peixe_OS))
       {
