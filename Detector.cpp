@@ -34,11 +34,11 @@ int main(int argc, char** argv){
   Point peixe;
   Dado trjt[100];
   Rect interesse[2];
-  interesse[0] = Rect(259,23,80,600);
-  interesse[1] = Rect(13,281,240,80);
-  Rect r1(13,281,240,80);
-  Rect r2(259,23,80,250);
-  Rect r3(259,366,80,250);
+  interesse[0] = Rect(23,259,600,80);
+  interesse[1] = Rect(281,13,80,240);
+  Rect r1(281,13,80,240);
+  Rect r2(23,259,250,80);
+  Rect r3(366,259,250,80);
   double t1 = 0, t2 = 0, t3 = 0, t=0;
   ofstream outdata; // outdata is like cin
 
@@ -73,8 +73,8 @@ int main(int argc, char** argv){
   cap >> video;
   bg = video.clone();
   Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
-  // Rect regiao(0,0,video.rows,video.cols);
-  Rect regiao(63,300,200,300);
+  // Rect regiao(0,0,video.cols,video.rows);
+  Rect regiao(300,66,200,300);
   Rect atbg(0,0,det_tam,det_tam);
   desenha_regiao(&r1, rastro, {255,0,0});
   desenha_regiao(&r2, rastro, {255,0,0});
@@ -83,7 +83,7 @@ int main(int argc, char** argv){
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
-    rastro.at<Vec3b>(peixe.x,peixe.y) = {0,255,255};
+    rastro.at<Vec3b>(peixe.y,peixe.x) = {0,255,255};
 
     key = (char) waitKey(20);
     if( key == 27 ){
@@ -152,8 +152,8 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
   threshold(a,a,mask_t,255,THRESH_BINARY);
   GaussianBlur( a, a, Size( 5, 5 ), 1, 1 );
 
-  for (int i = reg->tl().x; i < reg->br().x; i++) {
-    for (int j = reg->tl().y; j < reg->br().y; j++) {
+  for (int i = reg->tl().y; i < reg->br().y; i++) {
+    for (int j = reg->tl().x; j < reg->br().x; j++) {
       // parâmetros de decisão:
       // de acordo com as observações até o momento os melhores
       // valores para o exemplo em questão foram de 70 para valor
@@ -166,15 +166,15 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       {
         reg->width = det_tam;
         reg->height = det_tam;
-        reg->x = (i - det_tam/2) < 0 ? 0 : (i -  det_tam/2);
-        reg->y = (j - det_tam/2) < 0 ? 0 : (j  -  det_tam/2);
-        *p = Point(i,j);
+        reg->x = (j - det_tam/2) < 0 ? 0 : (j -  det_tam/2);
+        reg->y = (i - det_tam/2) < 0 ? 0 : (i  -  det_tam/2);
+        *p = Point(j,i);
         cout << "sim" << endl;
         return;
       }
     }
   }
-  *reg = Rect(0,0,a.rows,a.cols);
+  *reg = Rect(0,0,a.cols,a.rows);
   // *reg = Rect(p->x-50,p->y-50,100,100);
   // *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 40,reg->height + 40);
   return;
@@ -182,20 +182,20 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
 
 void desenha_cruz(Point c, Mat a, Vec3b cor){
   for (int v = -10; v < 10; v++) {
-    a.at<Vec3b>(c.x+v,c.y) = cor;
-    a.at<Vec3b>(c.x,c.y+v) = cor;
+    a.at<Vec3b>(c.y+v,c.x) = cor;
+    a.at<Vec3b>(c.y,c.x+v) = cor;
   }
 }
 
 void desenha_regiao(Rect* reg, Mat a, Vec3b cor){
-  for (int i = reg->tl().x; i < reg->br().x; i++){
-    a.at<Vec3b>(i,reg->tl().y) = cor;
-    a.at<Vec3b>(i,reg->br().y) = cor;
+  for (int i = reg->tl().y; i < reg->br().y; i++){
+    a.at<Vec3b>(i,reg->tl().x) = cor;
+    a.at<Vec3b>(i,reg->br().x) = cor;
   }
 
-  for (int j = reg->tl().y; j < reg->br().y; j++) {
-    a.at<Vec3b>(reg->tl().x,j) = cor;
-    a.at<Vec3b>(reg->br().x,j) = cor;
+  for (int j = reg->tl().x; j < reg->br().x; j++) {
+    a.at<Vec3b>(reg->tl().y,j) = cor;
+    a.at<Vec3b>(reg->br().y,j) = cor;
 
   }
 }
