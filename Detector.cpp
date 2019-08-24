@@ -14,10 +14,11 @@ struct Dado {
   float tempo;
 };
 
-#define mask_t 35
+#define mask_t 30
 #define peixe_V 85
 #define peixe_OS 40
-#define det_tam 40
+#define det_tam 30
+#define soma_t 3000
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
@@ -101,7 +102,7 @@ int main(int argc, char** argv){
       }
 
       for (int j = 0; j < i; j++) { //salva no arquivo
-        outdata << trjt[j].pos.y<< "\t" << trjt[j].pos.x<< "\t" << (t+j-i)/40 << endl;
+        outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/40 << endl;
       }
 
       mov_ant = mov.clone();
@@ -133,7 +134,7 @@ int main(int argc, char** argv){
     imshow("video", video);
     imshow("rastro", rastro);
 
-    if(i>0){vel_at = sqrt(pow(trjt[i].pos.x-trjt[i-1].pos.x,2)+pow(trjt[i].pos.y-trjt[i-1].pos.y,2))/(trjt[i-1].tempo-trjt[i].tempo);}
+    if(i>0){vel_at = sqrt( pow(trjt[i].pos.x - trjt[i-1].pos.x , 2) + pow(trjt[i].pos.y - trjt[i-1].pos.y , 2) ) / ( trjt[i-1].tempo - trjt[i].tempo );}
     vel = (vel<vel_at && vel_at<500)  ? vel_at : vel;
 
     cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
@@ -154,7 +155,7 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
   Point loc(0,0);
 
   threshold(a,a,mask_t,255,THRESH_BINARY);
-  GaussianBlur( a, a, Size( 3, 3 ), 0, 0 );
+  // GaussianBlur( a, a, Size( 1, 1 ), 1.6, 1.6 );
 
   for (int i = reg->tl().y; i < reg->br().y; i++) {
     for (int j = reg->tl().x; j < reg->br().x; j++) {
@@ -181,7 +182,7 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
   }
   cout << "soma: " << soma << " ";
 
-  if (loc == Point(0,0) || soma < 1200) {
+  if (loc == Point(0,0) || soma < soma_t) {
   // *reg = Rect(0,0,a.cols,a.rows);
   // *reg = Rect(p->x-50,p->y-50,100,100);
   *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 25,reg->height + 25);
@@ -193,9 +194,9 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
   p->x = loc.x/soma < a.cols ? loc.x/soma : a.cols/2;
   p->y = loc.y/soma < a.rows ? loc.y/soma : a.rows/2;
   reg->x = (p->x - det_tam/2) < 0 ? 0 : (p->x -  det_tam/2);
-  reg->x = (p->x + det_tam/2) >= a.cols ? a.cols - det_tam - 1: (p->x -  det_tam/2);
+  reg->x = reg->y+det_tam >= a.cols ? a.cols - det_tam - 1: reg->x;
   reg->y = (p->y - det_tam/2) < 0 ? 0 : (p->y  -  det_tam/2);
-  reg->y = (p->y + det_tam/2) >= a.rows ? a.rows - det_tam - 1: (p->y -  det_tam/2);
+  reg->y = reg->y+det_tam >= a.rows ? a.rows - det_tam - 1: reg->y;
   return;
 
 }
