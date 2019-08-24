@@ -127,7 +127,7 @@ int main(int argc, char** argv){
     desenha_regiao(&r3, video, {255,0,0});
 
     // rastro.copyTo(video, rastro);
-
+    line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0);
     imshow("mascara", mov);
     imshow("video", video);
     imshow("rastro", rastro);
@@ -169,7 +169,6 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
         reg->x = (j - det_tam/2) < 0 ? 0 : (j -  det_tam/2);
         reg->y = (i - det_tam/2) < 0 ? 0 : (i  -  det_tam/2);
         *p = Point(j,i);
-        cout << "sim" << endl;
         return;
       }
     }
