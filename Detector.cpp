@@ -31,7 +31,6 @@ int main(int argc, char** argv){
   VideoCapture cap("Video 177.wmv");
   char key;
   Mat video, bg, mov,mov_aux,mov_ant;
-  bool p = false;
   Dado trjt[100];
   Rect interesse[2];
   interesse[0] = Rect(23,259,600,80);
@@ -69,6 +68,8 @@ int main(int argc, char** argv){
   moveWindow("mascara", 20,350);
   namedWindow("rastro",1);
   moveWindow("rastro", 20,20);
+  // namedWindow("mapa_de_calor",1);
+  // moveWindow("mapa_de_calor", 700,350);
 
   cap >> video;
   bg = video.clone();
@@ -81,6 +82,9 @@ int main(int argc, char** argv){
   desenha_regiao(&r2, rastro, {255,0,0});
   desenha_regiao(&r3, rastro, {255,0,0});
   Point peixe(video.cols/2,video.rows/2);
+  Mat mapa_de_calor(video.rows, video.cols, CV_16UC1, 1);
+  // Mat lut;
+  // lut = imread("mapa_de_cor.png");
 
   while (true) {
     cap >> video;
@@ -91,26 +95,42 @@ int main(int argc, char** argv){
     if( key == 27 ){
       outdata << "velocidade máxima: " << vel;
       outdata.close();
+      normalize(mapa_de_calor, mapa_de_calor, 0, 255, NORM_MINMAX, CV_16UC1);
+      Mat mcu;
+      mapa_de_calor.convertTo(mapa_de_calor, CV_8UC3);
+      // LUT(mapa_de_calor,lut,mcu);
+      applyColorMap(mapa_de_calor, mcu, 2);
+      imwrite("MdC.png", mcu);
       break; // pressionar esc para sair
     }
 
-    if(i == 100 || !atbg.contains(peixe)){
-      if(p){
+    if(!atbg.contains(peixe)){
+      if(!mov_ant.empty()){
         absdiff(mov_ant,mov,mov_aux);
         threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
         video.copyTo(bg, mov_aux);
       }
-
-      for (int j = 0; j < i; j++) { //salva no arquivo
-        outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/40 << endl;
-      }
-
       mov_ant = mov.clone();
       atbg.x = regiao.x;
       atbg.y = regiao.y;
-      p = true;
+    }
+
+    if (i == 100) {
+      for (int j = 0; j < i; j++) { //salva no arquivo
+        outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/40 << endl;
+        Mat aux(video.rows, video.cols, CV_16UC1, 1);
+        circle(aux, Point(trjt[j].pos.x,trjt[j].pos.y), 10, 2, -1, 8, 0);
+
+        for (int m = 0; m < video.rows; m++) {
+          for (int n = 0; n < video.cols; n++) {
+            mapa_de_calor.at<ushort>(m,n) += aux.at<ushort>(m,n);
+          }
+        }
+      }
       i = 0;
     }
+
+
 
     if (r1.contains(peixe)) {
       t1++;
