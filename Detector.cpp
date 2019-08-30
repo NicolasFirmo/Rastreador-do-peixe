@@ -17,29 +17,70 @@ struct Dado {
 #define mask_t 30
 #define peixe_V 85
 #define peixe_OS 40
-#define det_tam 30
+#define det_tam 40
 #define soma_t 3000
+#define mov_thr 10
+#define vel_rep 1
+#define vel_info_at 1
+#define FPS 60 //ver como pega fps em opencv 3.3.1
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
-void desenha_regiao(Rect* reg, Mat a, Vec3b cor);
+void lookup(Mat a, Mat lut, Mat b);
+void CallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+  if  ( event == EVENT_LBUTTONDOWN )
+  {
+    cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+  }
+  else if  ( event == EVENT_RBUTTONDOWN )
+  {
+    cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+  }
+  else if  ( event == EVENT_MBUTTONDOWN )
+  {
+    cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
+  }
+  else if ( event == EVENT_MOUSEMOVE )
+  {
+    cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+
+  }
+}
+
 
 int main(int argc, char** argv){
   int i=0;
   float vel=0, vel_at=0;
   // VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
   VideoCapture cap("Video 177.wmv");
+  int height = cap.get(CAP_PROP_FRAME_HEIGHT);
+  int width = cap.get(CAP_PROP_FRAME_WIDTH);
+  int fps = FPS;
+  float mspf = 1000/fps;
   char key;
-  Mat video, bg, mov,mov_aux,mov_ant;
+  Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
+  Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
+  Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
   Dado trjt[100];
-  Rect interesse[2];
-  interesse[0] = Rect(23,259,600,80);
-  interesse[1] = Rect(281,13,80,240);
+  Rect regiao(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
+  Rect atbg(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
+  Rect Reg_det[2];
+  Reg_det[0] = Rect(23,259,600,80);
+  Reg_det[1] = Rect(281,13,80,240);
   Rect r1(281,13,80,240);
   Rect r2(23,259,250,80);
   Rect r3(366,259,250,80);
   double t1 = 0, t2 = 0, t3 = 0, t=0;
   ofstream outdata; // outdata is like cin
+  Point peixe(width/2,height/2);
+  Vec3b cor_rastro = {0,255,255};
+  Mat lut = imread("mapa_de_cor.png");
+
+  Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
+  circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
+  GaussianBlur( circulo, circulo, Size(15, 15), 0, 0);
+
 
   cout << fixed;
   cout << setprecision(2);
@@ -62,52 +103,47 @@ int main(int argc, char** argv){
   }
 
   // Configura janelas e a posição delas na tela
-  namedWindow("video",1);
-  moveWindow("video", 700,20);
-  namedWindow("mascara",1);
-  moveWindow("mascara", 20,350);
   namedWindow("rastro",1);
-  moveWindow("rastro", 20,20);
-  // namedWindow("mapa_de_calor",1);
-  // moveWindow("mapa_de_calor", 700,350);
+  moveWindow("rastro", 20,350);
+  namedWindow("mascara",1);
+  moveWindow("mascara", 700,350);
+  namedWindow("video",1);
+  moveWindow("video", 20,20);
+  namedWindow("mapa_de_calor",1);
+  moveWindow("mapa_de_calor", 700,20);
+
+
+  setMouseCallback("mapa_de_calor", CallBackFunc, NULL);
+
+  //--------------------------------------------------Inicialização--------------------------------------------------
 
   cap >> video;
   bg = video.clone();
-  Mat rastro(video.rows, video.cols, video.type(), Scalar(0,0,0));
-  Rect regiao(video.cols-det_tam/2,video.rows-det_tam/2,det_tam,det_tam);
-  Rect atbg(video.cols-det_tam/2,video.rows-det_tam/2,det_tam,det_tam);
   // Rect regiao(300,66,80,80);
   // Rect atbg(300,66,80,80);
-  desenha_regiao(&r1, rastro, {255,0,0});
-  desenha_regiao(&r2, rastro, {255,0,0});
-  desenha_regiao(&r3, rastro, {255,0,0});
-  Point peixe(video.cols/2,video.rows/2);
-  Mat mapa_de_calor(video.rows, video.cols, CV_16UC1, 1);
-  // Mat lut;
-  // lut = imread("mapa_de_cor.png");
+  rectangle(rastro, r1, Scalar(255,0,0), 1, LINE_8, 0);
+  rectangle(rastro, r2, Scalar(255,0,0), 1, LINE_8, 0);
+  rectangle(rastro, r3, Scalar(255,0,0), 1, LINE_8, 0);
 
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
-    rastro.at<Vec3b>(peixe.y,peixe.x) = {0,255,255};
+    rastro.at<Vec3b>(peixe.y,peixe.x) = cor_rastro;
 
-    key = (char) waitKey(20);
+    key = (char) waitKey(mspf);
     if( key == 27 ){
       outdata << "velocidade máxima: " << vel;
+      outdata << "fps " << fps;
       outdata.close();
-      normalize(mapa_de_calor, mapa_de_calor, 0, 255, NORM_MINMAX, CV_16UC1);
-      Mat mcu;
-      mapa_de_calor.convertTo(mapa_de_calor, CV_8UC3);
-      // LUT(mapa_de_calor,lut,mcu);
-      applyColorMap(mapa_de_calor, mcu, 2);
-      imwrite("MdC.png", mcu);
+      imwrite("MdC.png", mcu_aux);
+      imwrite("rastro.png", rastro);
       break; // pressionar esc para sair
     }
 
     if(!atbg.contains(peixe)){
       if(!mov_ant.empty()){
         absdiff(mov_ant,mov,mov_aux);
-        threshold(mov_aux,mov_aux,10,255,THRESH_BINARY_INV);
+        threshold(mov_aux,mov_aux,mov_thr,255,THRESH_BINARY_INV);
         video.copyTo(bg, mov_aux);
       }
       mov_ant = mov.clone();
@@ -115,22 +151,22 @@ int main(int argc, char** argv){
       atbg.y = regiao.y;
     }
 
-    if (i == 100) {
-      for (int j = 0; j < i; j++) { //salva no arquivo
-        outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/40 << endl;
-        Mat aux(video.rows, video.cols, CV_16UC1, 1);
-        circle(aux, Point(trjt[j].pos.x,trjt[j].pos.y), 10, 2, -1, 8, 0);
-
-        for (int m = 0; m < video.rows; m++) {
-          for (int n = 0; n < video.cols; n++) {
-            mapa_de_calor.at<ushort>(m,n) += aux.at<ushort>(m,n);
+    if (i == 10) { // desenha o mapa de calor
+      for (int j = 0; j < i; j++) {
+        outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/fps << endl;
+        for (int m = trjt[j].pos.y - circulo.rows/2; m < (trjt[j].pos.y + circulo.rows/2); m++) {
+          for (int n = trjt[j].pos.x - circulo.rows/2; n < trjt[j].pos.x + circulo.rows/2; n++) {
+            mapa_de_calor.at<ushort>(m,n) += circulo.at<ushort>(m - (trjt[j].pos.y - circulo.rows/2),n - (trjt[j].pos.x - circulo.rows/2));
           }
         }
       }
+      normalize(mapa_de_calor, mcu, 0, pow(2,16), NORM_MINMAX, CV_16U);
+      // LUT(mapa_de_calor,lut,mcu);
+      // applyColorMap(mcu, mcu, 2);
+      lookup(mcu,lut,mcu_aux);
+      imshow("mapa_de_calor",mcu_aux);
       i = 0;
     }
-
-
 
     if (r1.contains(peixe)) {
       t1++;
@@ -142,14 +178,14 @@ int main(int argc, char** argv){
 
     detectarpeixe(mov, video, &regiao, &peixe);
     desenha_cruz(peixe, video, {0,0,255});
-    desenha_regiao(&regiao, video, {0,255,0});
-    desenha_regiao(&atbg, video, {255,0,255});
-    desenha_regiao(&r1, video, {255,0,0});
-    desenha_regiao(&r2, video, {255,0,0});
-    desenha_regiao(&r3, video, {255,0,0});
+    rectangle(video, regiao, Scalar(0,255,0), 1, LINE_8, 0);
+    rectangle(video, atbg, Scalar(255,0,255), 1, LINE_8, 0);
+    rectangle(video, r1, Scalar(255,0,0), 1, LINE_8, 0);
+    rectangle(video, r2, Scalar(255,0,0), 1, LINE_8, 0);
+    rectangle(video, r3, Scalar(255,0,0), 1, LINE_8, 0);
 
     // rastro.copyTo(video, rastro);
-    line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0);
+    line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0); //velocímetro
     imshow("mascara", mov);
     imshow("video", video);
     imshow("rastro", rastro);
@@ -200,13 +236,13 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       }
     }
   }
-  cout << "soma: " << soma << " ";
+  // cout << "soma: " << soma << " ";
 
   if (loc == Point(0,0) || soma < soma_t) {
-  // *reg = Rect(0,0,a.cols,a.rows);
-  // *reg = Rect(p->x-50,p->y-50,100,100);
-  *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 25,reg->height + 25);
-  return;
+    // *reg = Rect(0,0,a.cols,a.rows);
+    // *reg = Rect(p->x-50,p->y-50,100,100);
+    *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 25,reg->height + 25);
+    return;
   }
 
   reg->width = det_tam;
@@ -228,16 +264,11 @@ void desenha_cruz(Point c, Mat a, Vec3b cor){
   }
 }
 
-void desenha_regiao(Rect* reg, Mat a, Vec3b cor){
-  for (int i = reg->tl().y; i < reg->br().y; i++){
-    a.at<Vec3b>(i,reg->tl().x) = cor;
-    a.at<Vec3b>(i,reg->br().x) = cor;
-  }
-
-  for (int j = reg->tl().x; j < reg->br().x; j++) {
-    a.at<Vec3b>(reg->tl().y,j) = cor;
-    a.at<Vec3b>(reg->br().y,j) = cor;
-
+void lookup(Mat a, Mat lut, Mat b) {
+  for (int i = 0; i < a.rows; i++) {
+    for (int j = 0; j < a.cols; j++) {
+      b.at<Vec3b>(i,j) = lut.at<Vec3b>(0,a.at<ushort>(i,j));
+    }
   }
 }
 
