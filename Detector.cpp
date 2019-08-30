@@ -5,9 +5,90 @@
 #include <string>
 #include <iomanip>
 #include <cmath>
+#include <vector>
+// #include "Botao.h"
 
 using namespace cv;
 using namespace std;
+
+class Botao{
+  public:
+  Mat img_at;
+  Mat img_t;
+  Mat img_f;
+  Mat tela;
+  void (*func)(bool);
+  Rect hb;
+  bool apertado;
+
+  Botao(Mat img_t, Mat img_f, void (*func)(bool), Point pos, Mat tela){
+    this->img_t = img_t;
+    this->img_f = img_f;
+    this->img_at = img_at;
+    this->setApertado(false);
+    this->func = func;
+    this->tela = tela;
+    int x = pos.x + img_at.cols>tela.cols ? tela.cols - img_at.cols : pos.x;
+    int y = pos.y + img_at.rows>tela.rows ? tela.rows - img_at.rows : pos.y;
+    this->hb = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,img_at.rows);
+  }
+
+  void mostrar(){
+    this->img_at.copyTo(tela(Rect(this->hb.tl().x,this->hb.tl().y,this->img_at.cols, this->img_at.rows)));
+  }
+
+  void exe(){
+    func(apertado);
+  }
+
+  void aperta(int x, int y){
+    if(hb.contains(Point(x,y))){
+      this->setApertado(true);
+    }
+  }
+
+  void solta(){
+    this->setApertado(false);
+  }
+
+  void setApertado(bool b){
+    this->apertado = b;
+    if (b) {
+      this->img_at = this->img_t;
+    } else {
+      this->img_at = this->img_f;
+    }
+  }
+
+};
+class Botoes{
+  public:
+  vector<Botao*> botoes;
+
+  void mostrar(){
+    for (int i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->mostrar();
+      }
+  }
+
+  void exe(){
+    for (int i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->exe();
+      }
+  }
+
+  void aperta(int x, int y){
+    for (int i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->aperta(x,y);
+    }
+  }
+
+  void solta(){
+    for (int i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->solta();
+    }
+  }
+};
 
 struct Dado {
   Point pos;
@@ -27,25 +108,40 @@ struct Dado {
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
 void lookup(Mat a, Mat lut, Mat b);
-void CallBackFunc(int event, int x, int y, int flags, void* userdata)
-{
-  if  ( event == EVENT_LBUTTONDOWN )
-  {
-    cout << "Left button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
-  }
-  else if  ( event == EVENT_RBUTTONDOWN )
-  {
-    cout << "Right button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
-  }
-  else if  ( event == EVENT_MBUTTONDOWN )
-  {
-    cout << "Middle button of the mouse is clicked - position (" << x << ", " << y << ")" << endl;
-  }
-  else if ( event == EVENT_MOUSEMOVE )
-  {
-    cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
 
+void CallBackFunc_video(int event, int x, int y, int flags, void* userdata){
+  Botoes* btbt = (Botoes*) userdata;
+
+  if (event == EVENT_LBUTTONDOWN) {
+    btbt->aperta(x,y);
   }
+
+  if (event == EVENT_LBUTTONUP) {
+    btbt->solta();
+  }
+
+
+}
+
+void bt_a(bool b) {
+  if(b){
+    cout<<"BOTAO AAAAA CARAI";
+  }
+  return;
+}
+
+void bt_b(bool b) {
+  if(b){
+    cout<<"BOTAO BBBBB CARAI";
+  }
+  return;
+}
+
+void bt_c(bool b) {
+  if(b){
+    cout<<"BOTAO CCCCC CARAI";
+  }
+  return;
 }
 
 
@@ -76,6 +172,7 @@ int main(int argc, char** argv){
   Point peixe(width/2,height/2);
   Vec3b cor_rastro = {0,255,255};
   Mat lut = imread("mapa_de_cor.png");
+  Botoes boto;
 
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
@@ -112,9 +209,6 @@ int main(int argc, char** argv){
   namedWindow("mapa_de_calor",1);
   moveWindow("mapa_de_calor", 700,20);
 
-
-  setMouseCallback("mapa_de_calor", CallBackFunc, NULL);
-
   //--------------------------------------------------Inicialização--------------------------------------------------
 
   cap >> video;
@@ -124,6 +218,14 @@ int main(int argc, char** argv){
   rectangle(rastro, r1, Scalar(255,0,0), 1, LINE_8, 0);
   rectangle(rastro, r2, Scalar(255,0,0), 1, LINE_8, 0);
   rectangle(rastro, r3, Scalar(255,0,0), 1, LINE_8, 0);
+
+  Botao* bta = new Botao(imread("bt1.png"),imread("bt2.png"),bt_a,Point(10,10),video);
+  Botao* btb = new Botao(imread("bt3.png"),imread("bt4.png"),bt_b,Point(50,10),video);
+  Botao* btc = new Botao(imread("bt1.png"),imread("bt2.png"),bt_c,Point(10,100),video);
+  boto.botoes.push_back(bta);
+  boto.botoes.push_back(btb);
+  boto.botoes.push_back(btc);
+  setMouseCallback("video", CallBackFunc_video, &boto);
 
   while (true) {
     cap >> video;
@@ -186,6 +288,10 @@ int main(int argc, char** argv){
 
     // rastro.copyTo(video, rastro);
     line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0); //velocímetro
+
+    boto.exe();
+    boto.mostrar();
+
     imshow("mascara", mov);
     imshow("video", video);
     imshow("rastro", rastro);
