@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <cmath>
 #include <vector>
-// #include "Botao.h"
 
 using namespace cv;
 using namespace std;
@@ -17,11 +16,11 @@ class Botao{
   Mat img_t;
   Mat img_f;
   Mat tela;
-  void (*func)(bool);
+  void (*func)(bool,void*);
   Rect hb;
   bool apertado;
 
-  Botao(Mat img_t, Mat img_f, void (*func)(bool), Point pos, Mat tela){
+  Botao(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela){
     this->img_t = img_t;
     this->img_f = img_f;
     this->img_at = img_at;
@@ -33,12 +32,16 @@ class Botao{
     this->hb = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,img_at.rows);
   }
 
+  void setPos(int x,int y) {
+    hb = Rect(x,y,hb.width,hb.height);
+  }
+
   void mostrar(){
     this->img_at.copyTo(tela(Rect(this->hb.tl().x,this->hb.tl().y,this->img_at.cols, this->img_at.rows)));
   }
 
   void exe(){
-    func(apertado);
+    func(apertado,NULL);
   }
 
   void aperta(int x, int y){
@@ -61,6 +64,42 @@ class Botao{
   }
 
 };
+class Slider : public Botao{
+  public:
+  Mat slm;
+  Rect sl;
+  int len;
+  int v;
+
+  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool, void*), Point pos, int len, float bt_pos, Mat tela) : Botao(img_t,img_f,func,Point(pos.x,pos.y+len*bt_pos-img_t.rows/2),tela){
+    this->slm = slm;
+    int x = pos.x + img_at.cols>tela.cols ? tela.cols - img_at.cols : pos.x;
+    int y = pos.y + img_at.rows + len > tela.rows ? tela.rows - img_at.rows - len : pos.y;
+    this->sl = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,len);
+    this->len = len;
+  }
+
+  void mostrar(){
+    for (int i = 0; i < this->sl.height; i++) {
+      this->slm.copyTo(tela(Rect(this->sl.tl().x+(img_t.cols-slm.cols)/2,this->sl.tl().y + i,this->slm.cols, this->slm.rows)));
+    }
+    this->img_at.copyTo(tela(Rect(this->hb.tl().x,this->hb.tl().y,this->img_at.cols, this->img_at.rows)));
+  }
+
+  void aperta(int x, int y){
+    if(sl.contains(Point(x,y))){
+      this->setApertado(true);
+      this->setPos(hb.tl().x,y-img_at.rows/2);
+      this->v = hb.tl().y;
+    }
+  }
+
+  void exe(){
+    func(apertado,&v);
+  }
+
+};
+
 class Botoes{
   public:
   vector<Botao*> botoes;
@@ -89,6 +128,41 @@ class Botoes{
     }
   }
 };
+class Sliders{
+  public:
+  vector<Slider*> sliders;
+
+  void mostrar(){
+    for (int i = 0; i < sliders.size(); i++) {
+      this->sliders[i]->mostrar();
+      }
+  }
+
+  void exe(){
+    for (int i = 0; i < sliders.size(); i++) {
+      this->sliders[i]->exe();
+      }
+  }
+
+  void aperta(int x, int y){
+    for (int i = 0; i < sliders.size(); i++) {
+      this->sliders[i]->aperta(x,y);
+    }
+  }
+
+  void solta(){
+    for (int i = 0; i < sliders.size(); i++) {
+      this->sliders[i]->solta();
+    }
+  }
+
+  Slider* getApertado(){
+    for (int i = 0; i < sliders.size(); i++) {
+      if(this->sliders[i]->apertado)return this->sliders[i];
+    }
+    return NULL;
+  }
+};
 
 struct Dado {
   Point pos;
@@ -109,7 +183,7 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
 void lookup(Mat a, Mat lut, Mat b);
 
-void CallBackFunc_video(int event, int x, int y, int flags, void* userdata){
+void CallBackFunc_bt(int event, int x, int y, int flags, void* userdata){
   Botoes* btbt = (Botoes*) userdata;
 
   if (event == EVENT_LBUTTONDOWN) {
@@ -122,24 +196,47 @@ void CallBackFunc_video(int event, int x, int y, int flags, void* userdata){
 
 
 }
+void CallBackFunc_sl(int event, int x, int y, int flags, void* userdata){
+  Sliders* slsl = (Sliders*) userdata;
 
-void bt_a(bool b) {
+  if (event == EVENT_LBUTTONDOWN) {
+    slsl->aperta(x,y);
+  }
+
+  if (event == EVENT_LBUTTONUP) {
+    slsl->solta();
+  }
+
+  if (event == EVENT_MOUSEMOVE) {
+    if(slsl->getApertado()){
+      slsl->getApertado()->aperta(x,y);
+    }
+  }
+
+}
+
+void bt_a(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO AAAAA CARAI";
   }
   return;
 }
-
-void bt_b(bool b) {
+void bt_b(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO BBBBB CARAI";
   }
   return;
 }
-
-void bt_c(bool b) {
+void bt_c(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO CCCCC CARAI";
+  }
+  return;
+}
+void bt_sl(bool b, void* userdata) {
+  int* v = (int*) userdata;
+  if(b){
+    cout<<"SLIDER_>>>>>"<<*v;
   }
   return;
 }
@@ -173,6 +270,7 @@ int main(int argc, char** argv){
   Vec3b cor_rastro = {0,255,255};
   Mat lut = imread("mapa_de_cor.png");
   Botoes boto;
+  Sliders sldrs;
 
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
@@ -219,18 +317,24 @@ int main(int argc, char** argv){
   rectangle(rastro, r2, Scalar(255,0,0), 1, LINE_8, 0);
   rectangle(rastro, r3, Scalar(255,0,0), 1, LINE_8, 0);
 
-  Botao* bta = new Botao(imread("bt1.png"),imread("bt2.png"),bt_a,Point(10,10),video);
-  Botao* btb = new Botao(imread("bt3.png"),imread("bt4.png"),bt_b,Point(50,10),video);
-  Botao* btc = new Botao(imread("bt1.png"),imread("bt2.png"),bt_c,Point(10,100),video);
+  Botao* bta = new Botao(imread("GUI/Botao/bt1.png"),imread("GUI/Botao/bt2.png"),bt_a,Point(10,10),video);
+  Botao* btb = new Botao(imread("GUI/Botao/bt3.png"),imread("GUI/Botao/bt4.png"),bt_b,Point(50,10),video);
+  Botao* btc = new Botao(imread("GUI/Botao/bt1.png"),imread("GUI/Botao/bt2.png"),bt_c,Point(10,100),video);
+  Slider* btsl = new Slider(imread("GUI/Slider/bt1.png"),imread("GUI/Slider/bt2.png"),imread("GUI/Slider/slm.png"),bt_sl,Point(200,100),100,0.5,video);
   boto.botoes.push_back(bta);
   boto.botoes.push_back(btb);
   boto.botoes.push_back(btc);
-  setMouseCallback("video", CallBackFunc_video, &boto);
+  sldrs.sliders.push_back(btsl);
+  setMouseCallback("video", CallBackFunc_bt, &boto); //Não posso mais de uma callback por tela
+  setMouseCallback("video", CallBackFunc_sl, &sldrs);
 
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
     rastro.at<Vec3b>(peixe.y,peixe.x) = cor_rastro;
+
+    // btsl->mostrar();
+    // btsl->exe();
 
     key = (char) waitKey(mspf);
     if( key == 27 ){
@@ -291,6 +395,8 @@ int main(int argc, char** argv){
 
     boto.exe();
     boto.mostrar();
+    sldrs.exe();
+    sldrs.mostrar();
 
     imshow("mascara", mov);
     imshow("video", video);

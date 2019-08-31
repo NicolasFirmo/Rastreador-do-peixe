@@ -1,8 +1,10 @@
 -Multithread
+-Organizar o programe e as classes em arquivos separados
 -Definir regiões com o mouse
 -Regiões de interesse, regiões de detecção
 -Sincronizar o tempo
 -Conseguir determinar a velocidade máxima
 -Amortecer os dados: vel atual, descartar pontos fora
 -GUI:
+Botões quase O.K.
 Retangulos e Círculos
