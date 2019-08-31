@@ -1,5 +1,7 @@
 -Multithread
--Organizar o programe e as classes em arquivos separados
+-Organizar o programe e as classes em arquivos separados (como compilar?)
+-Ajeitar os destrutores
+-Ajeitar as transparências dos botões
 -Definir regiões com o mouse
 -Regiões de interesse, regiões de detecção
 -Sincronizar o tempo
