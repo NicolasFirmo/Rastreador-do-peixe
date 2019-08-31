@@ -100,64 +100,62 @@ class Slider : public Botao{
 
 };
 
-class Botoes{
+class GUI{
   public:
   vector<Botao*> botoes;
-
-  void mostrar(){
-    for (int i = 0; i < botoes.size(); i++) {
-      this->botoes[i]->mostrar();
-      }
-  }
-
-  void exe(){
-    for (int i = 0; i < botoes.size(); i++) {
-      this->botoes[i]->exe();
-      }
-  }
-
-  void aperta(int x, int y){
-    for (int i = 0; i < botoes.size(); i++) {
-      this->botoes[i]->aperta(x,y);
-    }
-  }
-
-  void solta(){
-    for (int i = 0; i < botoes.size(); i++) {
-      this->botoes[i]->solta();
-    }
-  }
-};
-class Sliders{
-  public:
   vector<Slider*> sliders;
 
+  void insert(Botao* bt){
+    this->botoes.push_back(bt);
+  }
+  void insert(Slider* sl){
+    this->sliders.push_back(sl);
+  }
+
   void mostrar(){
-    for (int i = 0; i < sliders.size(); i++) {
+    for (unsigned i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->mostrar();
+      }
+    for (unsigned i = 0; i < sliders.size(); i++) {
       this->sliders[i]->mostrar();
       }
   }
 
   void exe(){
-    for (int i = 0; i < sliders.size(); i++) {
+    for (unsigned i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->exe();
+      }
+    for (unsigned i = 0; i < sliders.size(); i++) {
       this->sliders[i]->exe();
       }
   }
 
-  void aperta(int x, int y){
-    for (int i = 0; i < sliders.size(); i++) {
+  void aperta_botao(int x, int y){
+    for (unsigned i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->aperta(x,y);
+    }
+  }
+
+  void solta_botao(){
+    for (unsigned i = 0; i < botoes.size(); i++) {
+      this->botoes[i]->solta();
+    }
+  }
+
+  void aperta_slider(int x, int y){
+    for (unsigned i = 0; i < sliders.size(); i++) {
       this->sliders[i]->aperta(x,y);
     }
   }
 
-  void solta(){
-    for (int i = 0; i < sliders.size(); i++) {
+  void solta_slider(){
+    for (unsigned i = 0; i < sliders.size(); i++) {
       this->sliders[i]->solta();
     }
   }
 
-  Slider* getApertado(){
-    for (int i = 0; i < sliders.size(); i++) {
+  Slider* getApertado_slider(){
+    for (unsigned i = 0; i < sliders.size(); i++) {
       if(this->sliders[i]->apertado)return this->sliders[i];
     }
     return NULL;
@@ -183,35 +181,25 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p);
 void desenha_cruz(Point c, Mat a, Vec3b cor);
 void lookup(Mat a, Mat lut, Mat b);
 
-void CallBackFunc_bt(int event, int x, int y, int flags, void* userdata){
-  Botoes* btbt = (Botoes*) userdata;
+void CallBackFunc(int event, int x, int y, int flags, void* userdata){
+  GUI* gui = (GUI*) userdata;
 
   if (event == EVENT_LBUTTONDOWN) {
-    btbt->aperta(x,y);
+    gui->aperta_botao(x,y);
+    gui->aperta_slider(x,y);
   }
 
   if (event == EVENT_LBUTTONUP) {
-    btbt->solta();
-  }
-
-
-}
-void CallBackFunc_sl(int event, int x, int y, int flags, void* userdata){
-  Sliders* slsl = (Sliders*) userdata;
-
-  if (event == EVENT_LBUTTONDOWN) {
-    slsl->aperta(x,y);
-  }
-
-  if (event == EVENT_LBUTTONUP) {
-    slsl->solta();
+    gui->solta_botao();
+    gui->solta_slider();
   }
 
   if (event == EVENT_MOUSEMOVE) {
-    if(slsl->getApertado()){
-      slsl->getApertado()->aperta(x,y);
+    if(gui->getApertado_slider()){
+      gui->getApertado_slider()->aperta(x,y);
     }
   }
+
 
 }
 
@@ -269,8 +257,7 @@ int main(int argc, char** argv){
   Point peixe(width/2,height/2);
   Vec3b cor_rastro = {0,255,255};
   Mat lut = imread("mapa_de_cor.png");
-  Botoes boto;
-  Sliders sldrs;
+  GUI gg;
 
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
@@ -321,12 +308,11 @@ int main(int argc, char** argv){
   Botao* btb = new Botao(imread("GUI/Botao/bt3.png"),imread("GUI/Botao/bt4.png"),bt_b,Point(50,10),video);
   Botao* btc = new Botao(imread("GUI/Botao/bt1.png"),imread("GUI/Botao/bt2.png"),bt_c,Point(10,100),video);
   Slider* btsl = new Slider(imread("GUI/Slider/bt1.png"),imread("GUI/Slider/bt2.png"),imread("GUI/Slider/slm.png"),bt_sl,Point(200,100),100,0.5,video);
-  boto.botoes.push_back(bta);
-  boto.botoes.push_back(btb);
-  boto.botoes.push_back(btc);
-  sldrs.sliders.push_back(btsl);
-  setMouseCallback("video", CallBackFunc_bt, &boto); //Não posso mais de uma callback por tela
-  setMouseCallback("video", CallBackFunc_sl, &sldrs);
+  gg.insert(bta);
+  gg.insert(btb);
+  gg.insert(btc);
+  gg.insert(btsl);
+  setMouseCallback("video", CallBackFunc, &gg); //Não posso mais de uma callback por tela
 
   while (true) {
     cap >> video;
@@ -393,10 +379,8 @@ int main(int argc, char** argv){
     // rastro.copyTo(video, rastro);
     line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0); //velocímetro
 
-    boto.exe();
-    boto.mostrar();
-    sldrs.exe();
-    sldrs.mostrar();
+    gg.exe();
+    gg.mostrar();
 
     imshow("mascara", mov);
     imshow("video", video);
