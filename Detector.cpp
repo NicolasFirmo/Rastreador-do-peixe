@@ -15,21 +15,41 @@ class Botao{
   Mat img_at;
   Mat img_t;
   Mat img_f;
+  Mat alpha_at;
+  Mat alpha_t;
+  Mat alpha_f;
   Mat tela;
+  Mat telaRect;
   void (*func)(bool,void*);
   Rect hb;
   bool apertado;
 
   Botao(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela){
+    if(img_t.type() == 16)cvtColor(img_t, img_t, CV_BGR2BGRA);
+    vector<Mat> bgra_t;
+    split(img_t, bgra_t);
+    cvtColor(bgra_t[3], bgra_t[3], CV_GRAY2BGR);
+    this->alpha_t = bgra_t[3];
+    cvtColor(img_t, img_t, CV_BGRA2BGR);
     this->img_t = img_t;
+
+    if(img_f.type() == 16)cvtColor(img_f, img_f, CV_BGR2BGRA);
+    vector<Mat> bgra_f;
+    split(img_f, bgra_f);
+    cvtColor(bgra_f[3], bgra_f[3], CV_GRAY2BGR);
+    this->alpha_f = bgra_f[3];
+    cvtColor(img_f, img_f, CV_BGRA2BGR);
     this->img_f = img_f;
-    this->img_at = img_at;
+
+    this->img_at = this->img_f;
+    this->alpha_at = this->alpha_f;
     this->setApertado(false);
     this->func = func;
     this->tela = tela;
     int x = pos.x + img_at.cols>tela.cols ? tela.cols - img_at.cols : pos.x;
     int y = pos.y + img_at.rows>tela.rows ? tela.rows - img_at.rows : pos.y;
     this->hb = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,img_at.rows);
+    this->telaRect = tela(Rect(this->hb.tl().x,this->hb.tl().y,img_at.cols,img_at.rows));
   }
 
   void setPos(int x,int y) {
@@ -37,7 +57,16 @@ class Botao{
   }
 
   void mostrar(){
-    this->img_at.copyTo(tela(Rect(this->hb.tl().x,this->hb.tl().y,this->img_at.cols, this->img_at.rows)));
+    this->telaRect = tela(Rect(this->hb.tl().x,this->hb.tl().y,img_at.cols,img_at.rows));
+
+    subtract(this->telaRect, this->alpha_at, this->telaRect);
+
+    cvtColor(this->alpha_at, this->alpha_at, CV_BGR2GRAY);
+
+    add(img_at, this->telaRect, this->telaRect,this->alpha_at);
+          cout <<"img_at type:"<< img_at.type()<<endl;
+
+    cvtColor(this->alpha_at, this->alpha_at, CV_GRAY2BGR);
   }
 
   void exe(){
@@ -58,8 +87,10 @@ class Botao{
     this->apertado = b;
     if (b) {
       this->img_at = this->img_t;
+      this->alpha_at = this->alpha_t;
     } else {
       this->img_at = this->img_f;
+      this->alpha_at = this->alpha_f;
     }
   }
 
@@ -95,6 +126,10 @@ class Slider : public Botao{
   void aperta(int x, int y){
     if(sl.contains(Point(x,y))){
       this->setApertado(true);
+      this->setPos(hb.tl().x,y-img_at.rows/2);
+      this->v = hb.tl().y;
+      *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
+    }else if(Rect(0,sl.tl().y,tela.cols,sl.height).contains(Point(x,y)) && apertado){
       this->setPos(hb.tl().x,y-img_at.rows/2);
       this->v = hb.tl().y;
       *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
@@ -406,10 +441,10 @@ int main(int argc, char** argv){
 
   float cor_de_mel = 0;
 
-  Botao* bta = new Botao(imread("GUI/Botao/bt1.png"),imread("GUI/Botao/bt2.png"),bt_a,Point(10,10),video);
-  Botao* btb = new Botao(imread("GUI/Botao/bt3.png"),imread("GUI/Botao/bt4.png"),bt_b,Point(50,10),video);
-  Switch* btc = new Switch(imread("GUI/Botao/bt1.png"),imread("GUI/Botao/bt2.png"),bt_c,Point(10,100),video);
-  Slider* btsl = new Slider(imread("GUI/Slider/bt1.png"),imread("GUI/Slider/bt2.png"),imread("GUI/Slider/slm.png"),bt_sl,Point(200,100),100,0.5,video,&cor_de_mel,0,255);
+  Botao* bta = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),video);
+  Botao* btb = new Botao(imread("GUI/Botao/bt3.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt4.png",IMREAD_UNCHANGED),bt_b,Point(50,10),video);
+  Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
+  Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(200,100),200,0.5,video,&cor_de_mel,0,255);
   gg.insert(bta);
   gg.insert(btb);
   gg.insert(btc);
