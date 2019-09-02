@@ -64,7 +64,6 @@ class Botao{
     cvtColor(this->alpha_at, this->alpha_at, CV_BGR2GRAY);
 
     add(img_at, this->telaRect, this->telaRect,this->alpha_at);
-          cout <<"img_at type:"<< img_at.type()<<endl;
 
     cvtColor(this->alpha_at, this->alpha_at, CV_GRAY2BGR);
   }
@@ -337,22 +336,39 @@ void gui_func(int event, int x, int y, int flags, void* userdata){
 }
 
 //------------------------------Funções dos elementos da GUI------------------------------
+VideoCapture cap("Exemplo/Video 177.wmv");
+int height = cap.get(CAP_PROP_FRAME_HEIGHT);
+int width = cap.get(CAP_PROP_FRAME_WIDTH);
+Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
+Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
+Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
+Mat princ(height, width+200, CV_8UC3, Scalar(0,0,0));
 
 void bt_a(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO AAAAA CARAI";
+    video.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
   }
   return;
 }
 void bt_b(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO BBBBB CARAI";
+    rastro.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
   }
   return;
 }
 void bt_c(bool b, void* userdata) {
   if(b){
     cout<<"BOTAO CCCCC CARAI";
+    mcu_aux.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+  }
+  return;
+}
+void bt_d(bool b, void* userdata) {
+  if(b){
+    cout<<"BOTAO DDDDD CARAI";
+    mov.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
   }
   return;
 }
@@ -369,15 +385,9 @@ int main(int argc, char** argv){
   int i=0;
   float vel=0, vel_at=0;
   // VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
-  VideoCapture cap("Video 177.wmv");
-  int height = cap.get(CAP_PROP_FRAME_HEIGHT);
-  int width = cap.get(CAP_PROP_FRAME_WIDTH);
   int fps = FPS;
   float mspf = 1000/fps;
   char key;
-  Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
-  Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
-  Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
   Dado trjt[100];
   Rect regiao(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
   Rect atbg(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
@@ -428,6 +438,8 @@ int main(int argc, char** argv){
   moveWindow("video", 20,20);
   namedWindow("mapa_de_calor",1);
   moveWindow("mapa_de_calor", 700,20);
+  namedWindow("princ",1);
+  moveWindow("princ", 700,20);
 
   //--------------------------------------------------Inicialização--------------------------------------------------
 
@@ -441,15 +453,18 @@ int main(int argc, char** argv){
 
   float cor_de_mel = 0;
 
-  Botao* bta = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),video);
-  Botao* btb = new Botao(imread("GUI/Botao/bt3.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt4.png",IMREAD_UNCHANGED),bt_b,Point(50,10),video);
-  Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
+  Switch* bta = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),princ);
+  Switch* btb = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_b,Point(10,50),princ);
+  Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,90),princ);
+  Switch* btd = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_d,Point(10,130),princ);
+  // Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
   Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(200,100),200,0.5,video,&cor_de_mel,0,255);
   gg.insert(bta);
   gg.insert(btb);
   gg.insert(btc);
+  gg.insert(btd);
   gg.insert(btsl);
-  setMouseCallback("video", gui_func, &gg); //Não posso mais de uma callback por tela
+  setMouseCallback("princ", gui_func, &gg); //Não posso mais de uma callback por tela
 
   while (true) {
     cap >> video;
@@ -522,6 +537,7 @@ int main(int argc, char** argv){
     imshow("mascara", mov);
     imshow("video", video);
     imshow("rastro", rastro);
+    imshow("princ", princ);
 
     if(i>0){vel_at = sqrt( pow(trjt[i].pos.x - trjt[i-1].pos.x , 2) + pow(trjt[i].pos.y - trjt[i-1].pos.y , 2) ) / ( trjt[i-1].tempo - trjt[i].tempo );}
     vel = (vel<vel_at && vel_at<500)  ? vel_at : vel;
