@@ -23,8 +23,10 @@ class Botao{
   void (*func)(bool,void*);
   Rect hb;
   bool apertado;
+  void* var;
 
-  Botao(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela){
+  Botao(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela, void* var){
+    this->var = var;
     if(img_t.type() == 16)cvtColor(img_t, img_t, CV_BGR2BGRA);
     vector<Mat> bgra_t;
     split(img_t, bgra_t);
@@ -69,7 +71,7 @@ class Botao{
   }
 
   void exe(){
-    func(apertado,NULL);
+    func(apertado,var);
   }
 
   void aperta(int x, int y){
@@ -104,20 +106,20 @@ class Slider : public Botao{
   float* var;
   int min, max;
 
-  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool, void*), Point pos, int len, float bt_pos, Mat tela, float* var, int min, int max) : Botao(img_t,img_f,func,Point(pos.x,pos.y+len*bt_pos-img_t.rows/2),tela){
-    this->var = var;
+  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool, void*), Point pos, int len, float bt_pos, Mat tela, void* var, int min, int max) : Botao(img_t,img_f,func,Point(pos.x,pos.y+len*bt_pos-img_t.rows/2),tela, var){
     this->min = min;
     this->max = max;
     this->slm = slm;
+    this->var = (float*) var;
     int x = pos.x + img_at.cols>tela.cols ? tela.cols - img_at.cols : pos.x;
     int y = pos.y + img_at.rows + len > tela.rows ? tela.rows - img_at.rows - len : pos.y;
-    this->sl = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,len);
+    this->sl = Rect(x < 0 ? 0 : x,y < 0 ? 0 : y,img_at.cols,len+img_at.rows);
     this->len = len;
   }
 
   void mostrar(){
-    for (int i = 0; i < this->sl.height; i++) {
-      this->slm.copyTo(tela(Rect(this->sl.tl().x+(img_t.cols-slm.cols)/2,this->sl.tl().y + i,this->slm.cols, this->slm.rows)));
+    for (int i = 0; i < this->sl.height-img_at.rows; i++) {
+      this->slm.copyTo(tela(Rect(this->sl.tl().x+(img_t.cols-slm.cols)/2,this->sl.tl().y + i + img_at.rows/2,this->slm.cols, this->slm.rows)));
     }
     Botao::mostrar();
   }
@@ -125,12 +127,12 @@ class Slider : public Botao{
   void aperta(int x, int y){
     if(sl.contains(Point(x,y))){
       this->setApertado(true);
-      this->setPos(hb.tl().x,y-img_at.rows/2);
-      this->v = hb.tl().y;
+      this->setPos(hb.tl().x,(y-img_at.rows/2)>=sl.tl().y?((y+img_at.rows/2)<=sl.br().y?(y-img_at.rows/2):sl.br().y-img_at.rows) : sl.tl().y);
+      this->v = hb.tl().y-img_at.rows/2;
       *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
     }else if(Rect(0,sl.tl().y,tela.cols,sl.height).contains(Point(x,y)) && apertado){
-      this->setPos(hb.tl().x,y-img_at.rows/2);
-      this->v = hb.tl().y;
+      this->setPos(hb.tl().x,(y-img_at.rows/2)>=sl.tl().y?((y+img_at.rows/2)<=sl.br().y?(y-img_at.rows/2):sl.br().y-img_at.rows) : sl.tl().y);
+      this->v = hb.tl().y-img_at.rows/2;
       *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
     }
   }
@@ -143,7 +145,7 @@ class Slider : public Botao{
 class Switch : public Botao{
   public:
 
-  Switch(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela) : Botao(img_t,img_f,func,pos,tela){}
+  Switch(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela, void* var) : Botao(img_t,img_f,func,pos,tela, var){}
 
   void aperta(int x, int y){
     if(hb.contains(Point(x,y))){
@@ -336,39 +338,36 @@ void gui_func(int event, int x, int y, int flags, void* userdata){
 }
 
 //------------------------------Funções dos elementos da GUI------------------------------
-VideoCapture cap("Exemplo/Video 177.wmv");
-int height = cap.get(CAP_PROP_FRAME_HEIGHT);
-int width = cap.get(CAP_PROP_FRAME_WIDTH);
-Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
-Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
-Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
-Mat princ(height, width+200, CV_8UC3, Scalar(0,0,0));
 
 void bt_a(bool b, void* userdata) {
+  char* a = (char*) userdata;
   if(b){
     cout<<"BOTAO AAAAA CARAI";
-    video.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+    *a = 0;
   }
   return;
 }
 void bt_b(bool b, void* userdata) {
+  char* a = (char*) userdata;
   if(b){
     cout<<"BOTAO BBBBB CARAI";
-    rastro.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+    *a = 1;
   }
   return;
 }
 void bt_c(bool b, void* userdata) {
+  char* a = (char*) userdata;
   if(b){
     cout<<"BOTAO CCCCC CARAI";
-    mcu_aux.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+    *a = 2;
   }
   return;
 }
 void bt_d(bool b, void* userdata) {
+  char* a = (char*) userdata;
   if(b){
     cout<<"BOTAO DDDDD CARAI";
-    mov.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+    *a = 3;
   }
   return;
 }
@@ -382,6 +381,14 @@ void bt_sl(bool b, void* userdata) {
 
 
 int main(int argc, char** argv){
+  VideoCapture cap("Exemplo/Video 177.wmv");
+  int height = cap.get(CAP_PROP_FRAME_HEIGHT);
+  int width = cap.get(CAP_PROP_FRAME_WIDTH);
+  Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
+  Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
+  Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
+  Mat princ(height, width+200, CV_8UC3, Scalar(255,230,200));
+  Mat princ_bg(height, width+200, CV_8UC3, Scalar(255,230,200));
   int i=0;
   float vel=0, vel_at=0;
   // VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
@@ -403,6 +410,7 @@ int main(int argc, char** argv){
   Vec3b cor_rastro = {0,255,255};
   Mat lut = imread("mapa_de_cor.png");
   GUI gg;
+  char sw_tela = 0;
 
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
@@ -430,16 +438,15 @@ int main(int argc, char** argv){
   }
 
   // Configura janelas e a posição delas na tela
-  namedWindow("rastro",1);
-  moveWindow("rastro", 20,350);
-  namedWindow("mascara",1);
-  moveWindow("mascara", 700,350);
-  namedWindow("video",1);
-  moveWindow("video", 20,20);
-  namedWindow("mapa_de_calor",1);
-  moveWindow("mapa_de_calor", 700,20);
+  // namedWindow("rastro",1);
+  // moveWindow("rastro", 20,350);
+  // namedWindow("mascara",1);
+  // moveWindow("mascara", 700,350);
+  // namedWindow("video",1);
+  // moveWindow("video", 20,20);
+  // namedWindow("mapa_de_calor",1);
+  // moveWindow("mapa_de_calor", 700,20);
   namedWindow("princ",1);
-  moveWindow("princ", 700,20);
 
   //--------------------------------------------------Inicialização--------------------------------------------------
 
@@ -453,12 +460,12 @@ int main(int argc, char** argv){
 
   float cor_de_mel = 0;
 
-  Switch* bta = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),princ);
-  Switch* btb = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_b,Point(10,50),princ);
-  Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,90),princ);
-  Switch* btd = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_d,Point(10,130),princ);
+  Botao* bta = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),princ,&sw_tela);
+  Botao* btb = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_b,Point(10,50),princ,&sw_tela);
+  Botao* btc = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,90),princ,&sw_tela);
+  Botao* btd = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_d,Point(10,130),princ,&sw_tela);
   // Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
-  Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(200,100),200,0.5,video,&cor_de_mel,0,255);
+  Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(100,100),200,0.5,princ,&cor_de_mel,0,255);
   gg.insert(bta);
   gg.insert(btb);
   gg.insert(btc);
@@ -508,7 +515,7 @@ int main(int argc, char** argv){
       // LUT(mapa_de_calor,lut,mcu);
       // applyColorMap(mcu, mcu, 2);
       lookup(mcu,lut,mcu_aux);
-      imshow("mapa_de_calor",mcu_aux);
+      // imshow("mapa_de_calor",mcu_aux);
       i = 0;
     }
 
@@ -531,12 +538,31 @@ int main(int argc, char** argv){
     // rastro.copyTo(video, rastro);
     line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0); //velocímetro
 
+    switch (sw_tela) {
+      case 0:
+      princ_bg.copyTo(princ);
+      video.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+      break;
+      case 1:
+      princ_bg.copyTo(princ);
+      rastro.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+      break;
+      case 2:
+      princ_bg.copyTo(princ);
+      mcu_aux.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+      break;
+      case 3:
+      princ_bg.copyTo(princ);
+      mov.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+      break;
+    }
+
     gg.exe();
     gg.mostrar();
 
-    imshow("mascara", mov);
-    imshow("video", video);
-    imshow("rastro", rastro);
+    // imshow("mascara", mov);
+    // imshow("video", video);
+    // imshow("rastro", rastro);
     imshow("princ", princ);
 
     if(i>0){vel_at = sqrt( pow(trjt[i].pos.x - trjt[i-1].pos.x , 2) + pow(trjt[i].pos.y - trjt[i-1].pos.y , 2) ) / ( trjt[i-1].tempo - trjt[i].tempo );}

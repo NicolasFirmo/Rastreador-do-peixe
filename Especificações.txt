@@ -2,7 +2,7 @@
 -Organizar o programe e as classes em arquivos separados (como compilar?)
 -Ajeitar os destrutores
 -[OK] Ajeitar as transparências dos botões
--Ajeitar o escopo do slider
+-[OK] Ajeitar o escopo do slider
 -Botões com texto
 -Definir regiões com o mouse
 -Regiões de interesse, regiões de detecção
