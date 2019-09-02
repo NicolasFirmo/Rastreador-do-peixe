@@ -1,3 +1,4 @@
+-Melhorar desempenho
 -Multithread
 -Organizar o programe e as classes em arquivos separados (como compilar?)
 -Ajeitar os destrutores

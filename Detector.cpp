@@ -130,7 +130,7 @@ class Slider : public Botao{
       this->setPos(hb.tl().x,(y-img_at.rows/2)>=sl.tl().y?((y+img_at.rows/2)<=sl.br().y?(y-img_at.rows/2):sl.br().y-img_at.rows) : sl.tl().y);
       this->v = hb.tl().y-img_at.rows/2;
       *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
-    }else if(Rect(0,sl.tl().y,tela.cols,sl.height).contains(Point(x,y)) && apertado){
+    }else if(apertado){
       this->setPos(hb.tl().x,(y-img_at.rows/2)>=sl.tl().y?((y+img_at.rows/2)<=sl.br().y?(y-img_at.rows/2):sl.br().y-img_at.rows) : sl.tl().y);
       this->v = hb.tl().y-img_at.rows/2;
       *var = (min + max*((v-sl.tl().y+img_at.rows/2))/len);
@@ -246,8 +246,7 @@ struct Dado {
 #define mov_thr 10
 #define vel_rep 1
 #define vel_info_at 1
-#define FPS 60 //ver como pega fps em opencv 3.3.1
-
+#define FPS 1000 //ver como pega fps em opencv 3.3.1
 
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
 
@@ -264,10 +263,10 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       // valores para o exemplo em questão foram de 70 para valor
       // da máscara e 120 para o valor do canal azul da cor do peixe
       if ((a.at<Vec3b>(i,j)(0) > 40 &&
-      a.at<Vec3b>(i,j)(1) > 40 &&
-      a.at<Vec3b>(i,j)(2) > 40 &&
-      b.at<Vec3b>(i,j)(0) < (peixe_V + peixe_OS)) &&
-      b.at<Vec3b>(i,j)(0) > (peixe_V - peixe_OS))
+           a.at<Vec3b>(i,j)(1) > 40 &&
+           a.at<Vec3b>(i,j)(2) > 40 &&
+           b.at<Vec3b>(i,j)(0) < (peixe_V + peixe_OS)) &&
+           b.at<Vec3b>(i,j)(0) > (peixe_V - peixe_OS))
       {
         if (loc == Point(0,0)) {
           loc = Point(j,i);
@@ -280,25 +279,24 @@ void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
       }
     }
   }
+
   // cout << "soma: " << soma << " ";
 
   if (loc == Point(0,0) || soma < soma_t) {
     // *reg = Rect(0,0,a.cols,a.rows);
     // *reg = Rect(p->x-50,p->y-50,100,100);
-    *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 25,reg->height + 25);
-    return;
+    *reg = Rect(p->x - reg->width/2,p->y - reg->height/2,reg->width + 30,reg->height + 30);
+  }else{
+    reg->width = det_tam;
+    reg->height = det_tam;
+    p->x = loc.x/soma < a.cols ? loc.x/soma : a.cols/2;
+    p->y = loc.y/soma < a.rows ? loc.y/soma : a.rows/2;
+    reg->x = (p->x - det_tam/2) < 0 ? 0 : (p->x -  det_tam/2);
+    reg->x = reg->y+det_tam >= a.cols ? a.cols - det_tam - 1: reg->x;
+    reg->y = (p->y - det_tam/2) < 0 ? 0 : (p->y  -  det_tam/2);
+    reg->y = reg->y+det_tam >= a.rows ? a.rows - det_tam - 1: reg->y;
   }
-
-  reg->width = det_tam;
-  reg->height = det_tam;
-  p->x = loc.x/soma < a.cols ? loc.x/soma : a.cols/2;
-  p->y = loc.y/soma < a.rows ? loc.y/soma : a.rows/2;
-  reg->x = (p->x - det_tam/2) < 0 ? 0 : (p->x -  det_tam/2);
-  reg->x = reg->y+det_tam >= a.cols ? a.cols - det_tam - 1: reg->x;
-  reg->y = (p->y - det_tam/2) < 0 ? 0 : (p->y  -  det_tam/2);
-  reg->y = reg->y+det_tam >= a.rows ? a.rows - det_tam - 1: reg->y;
   return;
-
 };
 void desenha_cruz(Point c, Mat a, Vec3b cor){
   for (int v = -10; v < 10; v++) {
@@ -363,14 +361,6 @@ void bt_c(bool b, void* userdata) {
   }
   return;
 }
-void bt_d(bool b, void* userdata) {
-  char* a = (char*) userdata;
-  if(b){
-    cout<<"BOTAO DDDDD CARAI";
-    *a = 3;
-  }
-  return;
-}
 void bt_sl(bool b, void* userdata) {
   float* v = (float*) userdata;
   if(b){
@@ -381,23 +371,29 @@ void bt_sl(bool b, void* userdata) {
 
 
 int main(int argc, char** argv){
+
+  // Matrizes
   VideoCapture cap("Exemplo/Video 177.wmv");
   int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   int width = cap.get(CAP_PROP_FRAME_WIDTH);
   Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
-  Mat rastro(height, width, CV_8UC3, Scalar(0,0,0));
   Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
   Mat princ(height, width+200, CV_8UC3, Scalar(255,230,200));
   Mat princ_bg(height, width+200, CV_8UC3, Scalar(255,230,200));
+  Mat lut = imread("mapa_de_cor.png");
+
+  // variáveis de controle
+  Point peixe(width/2,height/2);
+  Rect regiao(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
+  Rect atbg(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
   int i=0;
-  float vel=0, vel_at=0;
-  // VideoCapture cap("Exemplo/cima.wmv"); // arquivo de vídeo ou imagem da webcam
   int fps = FPS;
   float mspf = 1000/fps;
   char key;
+
+  // variáveis de dado
+  float vel=0, vel_at=0;
   Dado trjt[100];
-  Rect regiao(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
-  Rect atbg(height - det_tam/2, width - det_tam/2, det_tam, det_tam);
   Rect Reg_det[2];
   Reg_det[0] = Rect(23,259,600,80);
   Reg_det[1] = Rect(281,13,80,240);
@@ -406,16 +402,13 @@ int main(int argc, char** argv){
   Rect r3(366,259,250,80);
   double t1 = 0, t2 = 0, t3 = 0, t=0;
   ofstream outdata; // outdata is like cin
-  Point peixe(width/2,height/2);
-  Vec3b cor_rastro = {0,255,255};
-  Mat lut = imread("mapa_de_cor.png");
+
+  //variáveis da GUI
   GUI gg;
   char sw_tela = 0;
-
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
   GaussianBlur( circulo, circulo, Size(15, 15), 0, 0);
-
 
   cout << fixed;
   cout << setprecision(2);
@@ -438,8 +431,6 @@ int main(int argc, char** argv){
   }
 
   // Configura janelas e a posição delas na tela
-  // namedWindow("rastro",1);
-  // moveWindow("rastro", 20,350);
   // namedWindow("mascara",1);
   // moveWindow("mascara", 700,350);
   // namedWindow("video",1);
@@ -454,29 +445,23 @@ int main(int argc, char** argv){
   bg = video.clone();
   // Rect regiao(300,66,80,80);
   // Rect atbg(300,66,80,80);
-  rectangle(rastro, r1, Scalar(255,0,0), 1, LINE_8, 0);
-  rectangle(rastro, r2, Scalar(255,0,0), 1, LINE_8, 0);
-  rectangle(rastro, r3, Scalar(255,0,0), 1, LINE_8, 0);
 
   float cor_de_mel = 0;
 
   Botao* bta = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),princ,&sw_tela);
   Botao* btb = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_b,Point(10,50),princ,&sw_tela);
   Botao* btc = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,90),princ,&sw_tela);
-  Botao* btd = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_d,Point(10,130),princ,&sw_tela);
   // Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
   Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(100,100),200,0.5,princ,&cor_de_mel,0,255);
   gg.insert(bta);
   gg.insert(btb);
   gg.insert(btc);
-  gg.insert(btd);
   gg.insert(btsl);
   setMouseCallback("princ", gui_func, &gg); //Não posso mais de uma callback por tela
 
   while (true) {
     cap >> video;
     absdiff(bg, video, mov);
-    rastro.at<Vec3b>(peixe.y,peixe.x) = cor_rastro;
 
     // btsl->mostrar();
     // btsl->exe();
@@ -487,7 +472,6 @@ int main(int argc, char** argv){
       outdata << "fps " << fps;
       outdata.close();
       imwrite("MdC.png", mcu_aux);
-      imwrite("rastro.png", rastro);
       break; // pressionar esc para sair
     }
 
@@ -502,20 +486,16 @@ int main(int argc, char** argv){
       atbg.y = regiao.y;
     }
 
-    if (i == 10) { // desenha o mapa de calor
+    if (i == 100) { // desenha o mapa de calor
       for (int j = 0; j < i; j++) {
         outdata << trjt[j].pos.x << "\t" << trjt[j].pos.y<< "\t" << (t+j-i)/fps << endl;
-        for (int m = trjt[j].pos.y - circulo.rows/2; m < (trjt[j].pos.y + circulo.rows/2); m++) {
-          for (int n = trjt[j].pos.x - circulo.rows/2; n < trjt[j].pos.x + circulo.rows/2; n++) {
-            mapa_de_calor.at<ushort>(m,n) += circulo.at<ushort>(m - (trjt[j].pos.y - circulo.rows/2),n - (trjt[j].pos.x - circulo.rows/2));
-          }
-        }
+        add(mapa_de_calor(Rect(trjt[j].pos.x - circulo.cols/2,trjt[j].pos.y - circulo.rows/2,circulo.cols,circulo.rows)), circulo, mapa_de_calor(Rect(trjt[j].pos.x - circulo.cols/2,trjt[j].pos.y - circulo.rows/2,circulo.cols,circulo.rows)));
+
       }
+
+
       normalize(mapa_de_calor, mcu, 0, pow(2,16), NORM_MINMAX, CV_16U);
-      // LUT(mapa_de_calor,lut,mcu);
-      // applyColorMap(mcu, mcu, 2);
       lookup(mcu,lut,mcu_aux);
-      // imshow("mapa_de_calor",mcu_aux);
       i = 0;
     }
 
@@ -535,7 +515,6 @@ int main(int argc, char** argv){
     rectangle(video, r2, Scalar(255,0,0), 1, LINE_8, 0);
     rectangle(video, r3, Scalar(255,0,0), 1, LINE_8, 0);
 
-    // rastro.copyTo(video, rastro);
     line(video, Point(30,350), Point(30+vel_at/5,350), Scalar(0,0,255), 5,8,0); //velocímetro
 
     switch (sw_tela) {
@@ -545,15 +524,11 @@ int main(int argc, char** argv){
       break;
       case 1:
       princ_bg.copyTo(princ);
-      rastro.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
+      mov.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
       break;
       case 2:
       princ_bg.copyTo(princ);
       mcu_aux.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
-      break;
-      case 3:
-      princ_bg.copyTo(princ);
-      mov.copyTo(princ(Rect(200,0,princ.cols-200,princ.rows)));
       break;
     }
 
@@ -562,13 +537,12 @@ int main(int argc, char** argv){
 
     // imshow("mascara", mov);
     // imshow("video", video);
-    // imshow("rastro", rastro);
     imshow("princ", princ);
-
-    if(i>0){vel_at = sqrt( pow(trjt[i].pos.x - trjt[i-1].pos.x , 2) + pow(trjt[i].pos.y - trjt[i-1].pos.y , 2) ) / ( trjt[i-1].tempo - trjt[i].tempo );}
-    vel = (vel<vel_at && vel_at<500)  ? vel_at : vel;
-
-    cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
+    
+    // if(i>0){vel_at = sqrt( pow(trjt[i].pos.x - trjt[i-1].pos.x , 2) + pow(trjt[i].pos.y - trjt[i-1].pos.y , 2) ) / ( trjt[i-1].tempo - trjt[i].tempo );}
+    // vel = (vel<vel_at && vel_at<500)  ? vel_at : vel;
+    //
+    // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
     trjt[i].pos = peixe;
     trjt[i].tempo = t/40;
