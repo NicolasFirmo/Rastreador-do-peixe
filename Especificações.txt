@@ -1,6 +1,7 @@
+-cerr<<
 -Melhorar desempenho
 -Multithread
--Organizar o programe e as classes em arquivos separados (como compilar?)
+-[OK] Organizar o programe e as classes em arquivos separados (como compilar?)
 -Ajeitar os destrutores
 -[OK] Ajeitar as transparências dos botões
 -[OK] Ajeitar o escopo do slider
