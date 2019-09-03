@@ -10,16 +10,6 @@
 using namespace cv;
 using namespace std;
 
-#define mask_t 30
-#define peixe_V 85
-#define peixe_OS 40
-#define det_tam 40
-#define soma_t 3000
-#define mov_thr 10
-#define vel_rep 1
-#define vel_info_at 1
-#define FPS 1000 //ver como pega fps em opencv 3.3.1
-
 void detectarpeixe(Mat a, Mat b, Rect* reg, Point* p) {
 
   int soma = 0;

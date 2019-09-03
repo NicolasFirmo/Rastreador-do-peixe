@@ -20,33 +20,20 @@ struct Dado {
 //------------------------------Funções dos elementos da GUI------------------------------
 
 void bt_a(bool b, void* userdata) {
-  char* a = (char*) userdata;
-  if(b){
-    cout<<"BOTAO AAAAA CARAI";
-    *a = 0;
-  }
+  if(b){*((char*) userdata) = 0;}
   return;
 }
 void bt_b(bool b, void* userdata) {
-  char* a = (char*) userdata;
-  if(b){
-    cout<<"BOTAO BBBBB CARAI";
-    *a = 1;
-  }
+  if(b){*((char*) userdata) = 1;}
   return;
 }
 void bt_c(bool b, void* userdata) {
-  char* a = (char*) userdata;
-  if(b){
-    cout<<"BOTAO CCCCC CARAI";
-    *a = 2;
-  }
+  if(b){*((char*) userdata) = 2;}
   return;
 }
 void bt_sl(bool b, void* userdata) {
-  float* v = (float*) userdata;
   if(b){
-    cout<<"SLIDER_>>>>>"<<*v;
+    cout<<"SLIDER_>>>>>"<<*((float*) userdata)<<endl;
   }
   return;
 }
@@ -54,7 +41,8 @@ void bt_sl(bool b, void* userdata) {
 int main(int argc, char** argv){
 
   // Matrizes
-  VideoCapture cap("Exemplo/Video 177.wmv");
+  // VideoCapture cap("Exemplo/Video 177.wmv");
+  VideoCapture cap(0);
   int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   int width = cap.get(CAP_PROP_FRAME_WIDTH);
   Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
@@ -86,6 +74,7 @@ int main(int argc, char** argv){
 
   //variáveis da GUI
   GUI gg;
+  float cor_de_mel = 0;
   char sw_tela = 0;
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
   circle(circulo, Point(circulo.rows/2, circulo.rows/2), det_tam/4, 5, -1, 8, 0);
@@ -124,21 +113,18 @@ int main(int argc, char** argv){
 
   cap >> video;
   bg = video.clone();
-  // Rect regiao(300,66,80,80);
-  // Rect atbg(300,66,80,80);
-
-  float cor_de_mel = 0;
 
   Botao* bta = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_a,Point(10,10),princ,&sw_tela);
   Botao* btb = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_b,Point(10,50),princ,&sw_tela);
   Botao* btc = new Botao(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,90),princ,&sw_tela);
   // Switch* btc = new Switch(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
-  Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(100,100),200,0.5,princ,&cor_de_mel,0,255);
+  Slider* btsl = new Slider(imread("GUI/Slider/bt3.png",IMREAD_UNCHANGED),imread("GUI/Slider/bt4.png",IMREAD_UNCHANGED),imread("GUI/Slider/slm.png",IMREAD_UNCHANGED),bt_sl,Point(100,10),100,1,princ,&cor_de_mel,0,255);
   gg.insert(bta);
   gg.insert(btb);
   gg.insert(btc);
   gg.insert(btsl);
   setMouseCallback("princ", gui_func, &gg); //Não posso mais de uma callback por tela
+
 
   while (true) {
     cap >> video;

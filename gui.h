@@ -4,6 +4,8 @@
 using namespace cv;
 using namespace std;
 
+#define FPS 60 //ver como pega fps em opencv 3.3.1
+
 class Botao{
   public:
   Mat img_at;
@@ -49,6 +51,7 @@ class Slider : public Botao{
   void mostrar();
 
   void aperta(int x, int y);
+  void setVar(int x, int y);
 
   void exe();
 
