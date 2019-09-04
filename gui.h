@@ -7,23 +7,26 @@ using namespace std;
 #define FPS 60 //ver como pega fps em opencv 3.3.1
 
 class Botao{
-  public:
-  Mat img_at;
+public:
   Mat img_t;
   Mat img_f;
+  Mat img_at;
   Mat alpha_at;
   Mat alpha_t;
   Mat alpha_f;
   Mat tela;
   Mat telaRect;
-  void (*func)(bool,void*);
   Rect hb;
   bool apertado;
   void* var;
+  void (*func)(bool&,void*);
 
-  Botao(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela, void* var);
+  Botao(Mat img_t, Mat img_f, void (*func)(bool&,void*), Point pos, Mat tela, void* var);
 
   void setPos(int x,int y);
+  void setPos(Point p);
+
+  void setTelaRect();
 
   void mostrar();
 
@@ -36,17 +39,17 @@ class Botao{
   void setApertado(bool b);
 
 };
-
 class Slider : public Botao{
-  public:
+public:
   Mat slm;
   Rect sl;
   int len;
   int v;
+  int min;
+  int max;
   float* var;
-  int min, max;
 
-  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool, void*), Point pos, int len, float bt_pos, Mat tela, void* var, int min, int max);
+  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool&, void*), Point pos, int len, float bt_pos, Mat tela, void* var, int min, int max);
 
   void mostrar();
 
@@ -57,16 +60,16 @@ class Slider : public Botao{
 
 };
 class Switch : public Botao{
-  public:
+public:
 
-  Switch(Mat img_t, Mat img_f, void (*func)(bool,void*), Point pos, Mat tela, void* var);
+  Switch(Mat img_t, Mat img_f, void (*func)(bool&,void*), Point pos, Mat tela, void* var);
 
   void aperta(int x, int y);
 
 };
 
 class GUI{
-  public:
+public:
   vector<Botao*> botoes;
   vector<Slider*> sliders;
   vector<Switch*> switches;
