@@ -1,4 +1,5 @@
 -cerr<<
+-Smart pointers (podem acabar de vez com os bugs)
 -Melhorar desempenho
 -Multithread
 -[OK] Organizar o programe e as classes em arquivos separados (como compilar?)
