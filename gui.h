@@ -78,6 +78,8 @@ public:
   void insert(Slider* sl);
   void insert(Switch* sw);
 
+  GUI();
+
   void mostrar();
 
   void exe();

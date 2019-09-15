@@ -1,6 +1,6 @@
 -cerr<<
 -Melhorar desempenho
--Multithread
+-[OK] Multithread
 -[OK] Organizar o programe e as classes em arquivos separados (como compilar?)
 -Ajeitar os destrutores
 -[OK] Ajeitar as transparências dos botões
@@ -8,9 +8,9 @@
 -Botões com texto
 -Definir regiões com o mouse
 -Regiões de interesse, regiões de detecção
--Sincronizar o tempo
+-[OK] Sincronizar o tempo
 -Conseguir determinar a velocidade máxima
--Amortecer os dados: vel atual, descartar pontos fora
+-[OK] Amortecer os dados: vel atual, descartar pontos fora
 -GUI:
 Botões quase O.K.
 Deixar mais bonito
