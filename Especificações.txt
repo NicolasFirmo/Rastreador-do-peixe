@@ -1,4 +1,6 @@
 -cerr<<
+-#include <optional> (c++17)
+-Smart pointers (podem acabar de vez com os bugs)
 -Melhorar desempenho
 -[OK] Multithread
 -[OK] Organizar o programe e as classes em arquivos separados (como compilar?)
