@@ -1,3 +1,5 @@
+#define NDEBUG
+#include <assert.h>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -12,13 +14,19 @@
 #include "nicfunc.h"
 #include <chrono>
 #include <unistd.h>
-#define NDEBUG
-#include <assert.h>
 
 using namespace cv;
 using namespace std;
 
 static thread *desenha = nullptr;
+
+static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
+{
+  std::time_t tt = std::chrono::high_resolution_clock::to_time_t(t);
+  std::string ts = std::ctime(&tt);
+  ts.resize(ts.size() - 1);
+  return ts;
+}
 
 //------------------------------Funções dos elementos da GUI------------------------------
 
@@ -46,6 +54,26 @@ void bt_c(bool &b, void *userdata)
   }
   return;
 }
+void bt_d(bool &b, void *userdata)
+{
+  if (b)
+  {
+    *((char *)userdata) = 3;
+  }
+  return;
+}
+void sw_mira(bool &b, void *userdata)
+{
+  if (b)
+  {
+    *((char *)userdata) = true;
+  }
+  else
+  {
+    *((char *)userdata) = false;
+  }
+  return;
+}
 void bt_sl(bool &b, void *userdata)
 {
   if (b)
@@ -59,10 +87,9 @@ int main(int argc, char **argv)
 {
   using namespace std::chrono;
 
-  high_resolution_clock::time_point t = high_resolution_clock::now();
   // Matrizes
-  // VideoCapture cap("Exemplo/Video 177.wmv");
-  VideoCapture cap(0);
+  VideoCapture cap("Exemplo/Video 177.wmv");
+  // VideoCapture cap(0);
   const int width = cap.get(CAP_PROP_FRAME_WIDTH);
   const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   Mat video(height, width, CV_8UC3), bg(height, width, CV_8UC3), mov(height, width, CV_8UC3), mov_aux(height, width, CV_8UC3), mov_ant(height, width, CV_8UC3), mcu(height, width, CV_8UC3), mcu_aux(height, width, CV_8UC3);
@@ -93,9 +120,10 @@ int main(int argc, char **argv)
   GUI gg;
   float cor_de_mel = 0;
   char sw_tela = 0;
+  bool desenha_gui = true;
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
-  circle(circulo, Point(circulo.rows / 2, circulo.rows / 2), det_tam / 8, 5, -1, 8, 0);
-  GaussianBlur(circulo, circulo, Size(15, 15), 0, 0);
+  circle(circulo, Point(circulo.rows / 2, circulo.rows / 2), det_tam / 6, 5, -1, 8, 0);
+  GaussianBlur(circulo, circulo, Size(21, 21), 0, 0);
 
   cout << fixed;
   cout << setprecision(2);
@@ -131,6 +159,9 @@ int main(int argc, char **argv)
 
   //--------------------------------------------------Inicialização--------------------------------------------------
 
+  high_resolution_clock::time_point t = high_resolution_clock::now();
+  outdata << timePointAsString(t) << endl;
+
   cap >> video;
   bg = video.clone();
   absdiff(bg, video, mov);
@@ -141,11 +172,14 @@ int main(int argc, char **argv)
   Botao bta(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
   Botao btb(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
   Botao btc(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
-  // Switch btc(imread("GUI/Botao/bt1.png",IMREAD_UNCHANGED),imread("GUI/Botao/bt2.png",IMREAD_UNCHANGED),bt_c,Point(10,100),video);
+  Botao btd(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
+  Switch btmira(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
   Slider btsl(imread("GUI/Slider/bt3.png", IMREAD_UNCHANGED), imread("GUI/Slider/bt4.png", IMREAD_UNCHANGED), imread("GUI/Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
   gg.insert(&bta);
   gg.insert(&btb);
   gg.insert(&btc);
+  gg.insert(&btd);
+  gg.insert(&btmira);
   gg.insert(&btsl);
   setMouseCallback("princ", gui_func, &gg); //Não posso mais de uma callback por tela
 
@@ -154,9 +188,10 @@ int main(int argc, char **argv)
     cap >> video;
     absdiff(bg, video, mov);
 
-    key = (char)waitKey(1);
+    key = (char)waitKey(10);
     if (key == 27)
     {
+      outdata << timePointAsString(high_resolution_clock::now()) << endl;
       outdata.close();
       imwrite("MdC.png", mcu_aux);
       break; // pressionar esc para sair
@@ -215,15 +250,6 @@ int main(int argc, char **argv)
     // cout<<"Detectou\n";
     trjt.push(peixe, (duration_cast<duration<double>>(high_resolution_clock::now() - t)).count());
 
-    desenha_cruz(peixe, video, {0, 0, (unsigned char)cor_de_mel});
-    rectangle(video, regiao, Scalar(0, 255, 0), 1, LINE_8, 0);
-    rectangle(video, atbg, Scalar(255, 0, 255), 1, LINE_8, 0);
-    rectangle(video, r1, Scalar(255, 0, 0), 1, LINE_8, 0);
-    rectangle(video, r2, Scalar(255, 0, 0), 1, LINE_8, 0);
-    rectangle(video, r3, Scalar(255, 0, 0), 1, LINE_8, 0);
-
-    cv::line(video, Point(30, 350), Point(30 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
-
     switch (sw_tela)
     {
     case 0:
@@ -238,12 +264,27 @@ int main(int argc, char **argv)
       princ_bg.copyTo(princ);
       mcu_aux.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
       break;
+    case 3:
+      princ_bg.copyTo(princ);
+      bg.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
+      break;
     default:
       break;
     }
 
     gg.exe();
     gg.mostrar();
+
+    if (desenha_gui)
+    {
+      desenha_cruz(peixe, princ(Rect(200,0,width,height)), {0, 0, (unsigned char)cor_de_mel});
+      rectangle(princ, regiao + Point(200,0), Scalar(0, 255, 0), 1, LINE_8, 0);
+      rectangle(princ, atbg + Point(200,0), Scalar(255, 0, 255), 1, LINE_8, 0);
+      rectangle(princ, r1 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      rectangle(princ, r2 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      rectangle(princ, r3 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      cv::line(princ, Point(230, 350), Point(230 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
+    }
 
     // imshow("mascara", mov);
     // imshow("video", video);
@@ -254,7 +295,7 @@ int main(int argc, char **argv)
     //
     // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
-    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << " i: " << i << "\n";
+    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
 
     i++;
   }

@@ -60,7 +60,7 @@ void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p)
     }
   }
 
-  if (locX == 0 && locY == 0 || soma < soma_t)
+  if ((locX == 0 && locY == 0) || soma < soma_t)
   {
     int n_regX = reg.tl().x - 15 < 0 ? reg.tl().x - 1 < 0 ? 0 : reg.tl().x - 1 : reg.tl().x - 15;
     int n_regY = reg.tl().y - 15 < 0 ? reg.tl().y - 1 < 0 ? 0 : reg.tl().y - 1 : reg.tl().y - 15;

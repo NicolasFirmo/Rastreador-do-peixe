@@ -4,7 +4,8 @@
 using namespace cv;
 using namespace std;
 
-class Botao{
+class Botao
+{
 public:
   Mat img_t;
   Mat img_f;
@@ -16,12 +17,12 @@ public:
   Mat telaRect;
   Rect hb;
   bool apertado;
-  void* var;
-  void (*func)(bool&,void*);
+  void *var;
+  void (*func)(bool &, void *);
 
-  Botao(Mat img_t, Mat img_f, void (*func)(bool&,void*), Point pos, Mat tela, void* var);
+  Botao(Mat img_t, Mat img_f, void (*func)(bool &, void *), Point pos, Mat tela, void *var);
 
-  void setPos(int x,int y);
+  void setPos(int x, int y);
   void setPos(Point p);
 
   void setTelaRect();
@@ -35,9 +36,9 @@ public:
   void solta();
 
   void setApertado(bool b);
-
 };
-class Slider : public Botao{
+class Slider : public Botao
+{
 public:
   Mat slm;
   Rect sl;
@@ -45,9 +46,9 @@ public:
   int v;
   int min;
   int max;
-  float* var;
+  float *var;
 
-  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool&, void*), Point pos, int len, float bt_pos, Mat tela, void* var, int min, int max);
+  Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool &, void *), Point pos, int len, float bt_pos, Mat tela, void *var, int min, int max);
 
   void mostrar();
 
@@ -55,26 +56,25 @@ public:
   void setVar(int x, int y);
 
   void exe();
-
 };
-class Switch : public Botao{
+class Switch : public Botao
+{
 public:
-
-  Switch(Mat img_t, Mat img_f, void (*func)(bool&,void*), Point pos, Mat tela, void* var);
+  Switch(Mat img_t, Mat img_f, void (*func)(bool &, void *), Point pos, Mat tela, void *var, const bool &sw_down);
 
   void aperta(int x, int y);
-
 };
 
-class GUI{
+class GUI
+{
 public:
-  vector<Botao*> botoes;
-  vector<Slider*> sliders;
-  vector<Switch*> switches;
+  vector<Botao *> botoes;
+  vector<Slider *> sliders;
+  vector<Switch *> switches;
 
-  void insert(Botao* bt);
-  void insert(Slider* sl);
-  void insert(Switch* sw);
+  void insert(Botao *bt);
+  void insert(Slider *sl);
+  void insert(Switch *sw);
 
   GUI();
 
@@ -92,9 +92,9 @@ public:
 
   void solta_slider();
 
-  Slider* getApertado_slider();
+  Slider *getApertado_slider();
 };
 
-void gui_func(int event, int x, int y, int flags, void* userdata);
+void gui_func(int event, int x, int y, int flags, void *userdata);
 
 #endif
