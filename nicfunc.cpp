@@ -20,8 +20,8 @@ void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p)
 {
   float soma = 0;
   unsigned long locX = 0, locY = 0;
-  // cout << "DURANTE locX: " << locX << endl;
-  // cout << "DURANTE locY: " << locY << endl;
+  // cout << "ANTES locX: " << locX << endl;
+  // cout << "ANTES locY: " << locY << endl;
 
   threshold(a, a, mask_t, 255, THRESH_BINARY);
   // GaussianBlur( a, a, Size( 1, 1 ), 1.6, 1.6 );
@@ -30,6 +30,7 @@ void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p)
   {
     for (int j = reg.tl().x; j < reg.br().x; j++)
     {
+      // cout << "for interno: " << endl;
       assert(i >= 0);
       assert(j >= 0);
       // parâmetros de decisão:
@@ -42,14 +43,17 @@ void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p)
            b.at<Vec3b>(i, j)(0) < (peixe_V + peixe_OS)) &&
           b.at<Vec3b>(i, j)(0) > (peixe_V - peixe_OS))
       {
+        // cout << "avalização: " << endl;
         if (locX == 0 && locY == 0)
         {
+          // cout << "if: " << endl;
           locX = j;
           locY = i;
           soma = 1;
         }
         else
         {
+          // cout << "else: " << endl;
           assert((a.at<Vec3b>(i, j)(0) + a.at<Vec3b>(i, j)(1) + a.at<Vec3b>(i, j)(2)) > 0);
           // cout << "DURANTE locX: " << locX << " DURANTE locY: " << locY << " ij: " << i << "," << j << endl;
           locX += j * (a.at<Vec3b>(i, j)(0) + a.at<Vec3b>(i, j)(1) + a.at<Vec3b>(i, j)(2));
@@ -66,8 +70,8 @@ void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p)
     int n_regY = reg.tl().y - 15 < 0 ? reg.tl().y - 1 < 0 ? 0 : reg.tl().y - 1 : reg.tl().y - 15;
     int n_regW = reg.width + 30 + n_regX >= a.cols ? (reg.width + 1 + n_regX >= a.cols ? reg.width : reg.width + 1) : reg.width + 30;
     int n_regH = reg.height + 30 + n_regY >= a.rows ? (reg.height + 1 + n_regY >= a.rows ? reg.height : reg.height + 1) : reg.height + 30;
-    //assert(n_regX < 0 || n_regX + n_regW >= a.cols);
-    //assert(n_regY < 0 || n_regY + n_regH >= a.cols);
+    // assert(n_regX < 0 || n_regX + n_regW >= a.cols);
+    // assert(n_regY < 0 || n_regY + n_regH >= a.cols);
     reg = Rect(n_regX, n_regY, n_regW, n_regH);
   }
   else
@@ -117,25 +121,27 @@ void lookup(Mat a, Mat lut, Mat b)
 
 void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux)
 {
+  // cout << "desenha MdC\n";
+
   for (unsigned int j = 0; j < i; j++)
   {
+    // cout << "pos x,y: " << trjt.front().pos.x << "," << trjt.front().pos.y << endl;
+    int map_X = trjt.front().pos.x - circulo.cols / 2 <= 0 ? 0 : trjt.front().pos.x - circulo.cols / 2;
+    int map_Y = trjt.front().pos.y - circulo.rows / 2 <= 0 ? 0 : trjt.front().pos.y - circulo.rows / 2;
+    int c_X = trjt.front().pos.x - circulo.cols / 2 <= 0 ? trjt.front().pos.x : 0;
+    int c_Y = trjt.front().pos.y - circulo.rows / 2 <= 0 ? trjt.front().pos.y : 0;
+    int wid = trjt.front().pos.x + circulo.cols / 2 >= mapa_de_calor.cols ? mapa_de_calor.cols - trjt.front().pos.x : trjt.front().pos.x - circulo.cols / 2 <= 0 ? circulo.cols - trjt.front().pos.x : circulo.cols;
+    int hei = trjt.front().pos.y + circulo.rows / 2 >= mapa_de_calor.rows ? mapa_de_calor.rows - trjt.front().pos.y : trjt.front().pos.y - circulo.rows / 2 <= 0 ? circulo.rows - trjt.front().pos.y : circulo.rows;
+    
     outdata << trjt.front().pos.x << "\t" << trjt.front().pos.y << "\t" << trjt.front().tempo << "\t" << trjt.front().vel << endl;
-    add(mapa_de_calor(Rect(trjt.front().pos.x - circulo.cols / 2 < 0 ? 0 : trjt.front().pos.x - circulo.cols / 2,
-                           trjt.front().pos.y - circulo.rows / 2 < 0 ? 0 : trjt.front().pos.y - circulo.rows / 2,
-                           trjt.front().pos.x + circulo.cols / 2 >= mapa_de_calor.cols ? mapa_de_calor.cols - trjt.front().pos.x : circulo.cols,
-                           trjt.front().pos.y + circulo.rows / 2 >= mapa_de_calor.rows ? mapa_de_calor.rows - trjt.front().pos.y : circulo.rows)),
-        circulo(Rect(trjt.front().pos.x - circulo.cols / 2 < 0 ? trjt.front().pos.x : 0,
-                     trjt.front().pos.y - circulo.rows / 2 < 0 ? trjt.front().pos.y : 0,
-                     trjt.front().pos.x + circulo.cols / 2 >= mapa_de_calor.cols ? mapa_de_calor.cols - trjt.front().pos.x : circulo.cols,
-                     trjt.front().pos.y + circulo.rows / 2 >= mapa_de_calor.rows ? mapa_de_calor.rows - trjt.front().pos.y : circulo.rows)),
-        mapa_de_calor(Rect(trjt.front().pos.x - circulo.cols / 2 < 0 ? 0 : trjt.front().pos.x - circulo.cols / 2,
-                           trjt.front().pos.y - circulo.rows / 2 < 0 ? 0 : trjt.front().pos.y - circulo.rows / 2,
-                           trjt.front().pos.x + circulo.cols / 2 >= mapa_de_calor.cols ? mapa_de_calor.cols - trjt.front().pos.x : circulo.cols,
-                           trjt.front().pos.y + circulo.rows / 2 >= mapa_de_calor.rows ? mapa_de_calor.rows - trjt.front().pos.y : circulo.rows)));
+    add(mapa_de_calor(Rect(map_X, map_Y, wid, hei)),
+        circulo(Rect(c_X, c_Y, wid, hei)),
+        mapa_de_calor(Rect(map_X, map_Y, wid, hei)));
     trjt.pop();
   }
   normalize(mapa_de_calor, mcu, 0, 65536, NORM_MINMAX, CV_16U);
   lookup(mcu, lut, mcu_aux);
+  // cout << "terminou de desenhar MdC\n";
 
   return;
 }

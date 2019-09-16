@@ -88,8 +88,8 @@ int main(int argc, char **argv)
   using namespace std::chrono;
 
   // Matrizes
-  VideoCapture cap("Exemplo/Video 177.wmv");
-  // VideoCapture cap(0);
+  // VideoCapture cap("Exemplo/Video 177.wmv");
+  VideoCapture cap(0);
   const int width = cap.get(CAP_PROP_FRAME_WIDTH);
   const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   Mat video(height, width, CV_8UC3), bg(height, width, CV_8UC3), mov(height, width, CV_8UC3), mov_aux(height, width, CV_8UC3), mov_ant(height, width, CV_8UC3), mcu(height, width, CV_8UC3), mcu_aux(height, width, CV_8UC3);
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
       break; // pressionar esc para sair
     }
 
-    // cout<<"atualiza bg\n";
+    // cout << "atualiza bg\n";
     if (!atbg.contains(peixe))
     {
       absdiff(mov_ant, mov, mov_aux);
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
       assert(regiao.y + det_tam < video.cols);
       atbg.x = regiao.x;
       atbg.y = regiao.y;
-      // cout<<"terminou de atualizar bg\n";
+      // cout << "terminou de atualizar bg\n";
     }
 
     assert(peixe.x >= 0);
@@ -220,7 +220,6 @@ int main(int argc, char **argv)
 
     if (i == trjt_size)
     { // desenha o mapa de calor
-      // cout<<"desenha MdC\n";
       if (desenha != nullptr)
       {
         desenha->join();
@@ -229,7 +228,6 @@ int main(int argc, char **argv)
       desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux);
       trjt.reset();
       i = 0;
-      // cout<<"terminou de desenhar MdC\n";
     }
 
     if (r1.contains(peixe))
@@ -248,8 +246,11 @@ int main(int argc, char **argv)
     // cout<<"Detecta peixe\n";
     detectarpeixe(mov, video, regiao, peixe);
     // cout<<"Detectou\n";
+    // cout<<"trjt.push\n";
     trjt.push(peixe, (duration_cast<duration<double>>(high_resolution_clock::now() - t)).count());
+    // cout<<"trjt.pushou\n";
 
+    // cout<<"atualiza princ\n";
     switch (sw_tela)
     {
     case 0:
@@ -271,20 +272,23 @@ int main(int argc, char **argv)
     default:
       break;
     }
+    // cout<<"princ atualizado\n";
 
     gg.exe();
     gg.mostrar();
+    // cout<<"gui mostrado\n";
 
     if (desenha_gui)
     {
-      desenha_cruz(peixe, princ(Rect(200,0,width,height)), {0, 0, (unsigned char)cor_de_mel});
-      rectangle(princ, regiao + Point(200,0), Scalar(0, 255, 0), 1, LINE_8, 0);
-      rectangle(princ, atbg + Point(200,0), Scalar(255, 0, 255), 1, LINE_8, 0);
-      rectangle(princ, r1 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
-      rectangle(princ, r2 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
-      rectangle(princ, r3 + Point(200,0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      desenha_cruz(peixe, princ(Rect(200, 0, width, height)), {0, 0, (unsigned char)cor_de_mel});
+      rectangle(princ, regiao + Point(200, 0), Scalar(0, 255, 0), 1, LINE_8, 0);
+      rectangle(princ, atbg + Point(200, 0), Scalar(255, 0, 255), 1, LINE_8, 0);
+      rectangle(princ, r1 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      rectangle(princ, r2 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
+      rectangle(princ, r3 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
       cv::line(princ, Point(230, 350), Point(230 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
     }
+    // cout<<"gui desenhado\n";
 
     // imshow("mascara", mov);
     // imshow("video", video);

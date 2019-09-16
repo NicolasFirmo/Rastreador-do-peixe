@@ -1,5 +1,6 @@
 -cerr<<
 -#include <optional> (c++17)
+-Quanto tempo o mapa de calor aguenta rodar?
 -Smart pointers (podem acabar de vez com os bugs)
 -Melhorar desempenho
 -[OK] Multithread
