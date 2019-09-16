@@ -5,15 +5,14 @@
 #define NICFUNC_H
 #include <cmath>
 
-int const mask_t = 30;
-int const peixe_V = 85;
-int const peixe_OS = 40;
-int const det_tam = 40;
-int const soma_t = 3000;
-int const mov_thr = 10;
-int const vel_rep = 1;
-int const vel_info_at = 1;
-int const trjt_size = 100;
+static unsigned int const mask_t = 30;
+static unsigned int const peixe_V = 85;
+static unsigned int const peixe_OS = 40;
+static unsigned int const det_tam = 40;
+static unsigned int const mov_thr = 10;
+static unsigned int const vel_rep = 1;
+static unsigned int const vel_info_at = 1;
+static unsigned int const trjt_size = 5;
 
 using namespace cv;
 using namespace std;
@@ -83,6 +82,5 @@ private:
   }
 };
 
-void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux, int &E);
-void atualizabg(Rect& atbg,Point& peixe, Mat mov_ant, Mat mov, Mat mov_aux, Mat video, Mat bg, Rect& regiao);
+void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux);
 #endif

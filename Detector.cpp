@@ -12,6 +12,8 @@
 #include "nicfunc.h"
 #include <chrono>
 #include <unistd.h>
+#define NDEBUG
+#include <assert.h>
 
 using namespace cv;
 using namespace std;
@@ -56,16 +58,14 @@ void bt_sl(bool &b, void *userdata)
 int main(int argc, char **argv)
 {
   using namespace std::chrono;
-  int desenhaEstado = -1;
 
   high_resolution_clock::time_point t = high_resolution_clock::now();
-
   // Matrizes
-  VideoCapture cap("Exemplo/Video 177.wmv");
-  // VideoCapture cap(0);
-  const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
+  // VideoCapture cap("Exemplo/Video 177.wmv");
+  VideoCapture cap(0);
   const int width = cap.get(CAP_PROP_FRAME_WIDTH);
-  Mat video, bg, mov, mov_aux, mov_ant, mcu, mcu_aux(height, width, CV_8UC3);
+  const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
+  Mat video(height, width, CV_8UC3), bg(height, width, CV_8UC3), mov(height, width, CV_8UC3), mov_aux(height, width, CV_8UC3), mov_ant(height, width, CV_8UC3), mcu(height, width, CV_8UC3), mcu_aux(height, width, CV_8UC3);
   Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
   Mat princ(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
   Mat princ_bg(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
@@ -73,11 +73,9 @@ int main(int argc, char **argv)
 
   // variáveis de controle
   Point peixe(width / 2, height / 2);
-  Rect regiao(height - det_tam / 2, width - det_tam / 2, det_tam, det_tam);
-  Rect atbg(height - det_tam / 2, width - det_tam / 2, det_tam, det_tam);
+  Rect regiao((height - det_tam) / 2, (width - det_tam) / 2, det_tam, det_tam);
+  Rect atbg((height - det_tam) / 2, (width - det_tam) / 2, det_tam, det_tam);
   int i = 0;
-  const int fps = FPS;
-  const float mspf = 1000 / fps;
   char key;
 
   // variáveis de dado
@@ -156,35 +154,47 @@ int main(int argc, char **argv)
     cap >> video;
     absdiff(bg, video, mov);
 
-    key = (char)waitKey(mspf);
+    key = (char)waitKey(1);
     if (key == 27)
     {
-      outdata << "fps " << fps;
       outdata.close();
       imwrite("MdC.png", mcu_aux);
       break; // pressionar esc para sair
     }
 
+    // cout<<"atualiza bg\n";
     if (!atbg.contains(peixe))
     {
       absdiff(mov_ant, mov, mov_aux);
       threshold(mov_aux, mov_aux, mov_thr, 255, THRESH_BINARY_INV);
       video.copyTo(bg, mov_aux);
       mov_ant = mov.clone();
+      assert(regiao.x >= 0);
+      assert(regiao.y >= 0);
+      assert(regiao.x + det_tam < video.cols);
+      assert(regiao.y + det_tam < video.cols);
       atbg.x = regiao.x;
       atbg.y = regiao.y;
+      // cout<<"terminou de atualizar bg\n";
     }
+
+    assert(peixe.x >= 0);
+    assert(peixe.y >= 0);
+    assert(peixe.x < video.cols);
+    assert(peixe.y < video.rows);
 
     if (i == trjt_size)
     { // desenha o mapa de calor
-      if (desenha != nullptr){
+      // cout<<"desenha MdC\n";
+      if (desenha != nullptr)
+      {
         desenha->join();
         delete desenha;
       }
-      desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux, std::ref(desenhaEstado));
+      desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux);
       trjt.reset();
-      desenhaEstado = 1;
       i = 0;
+      // cout<<"terminou de desenhar MdC\n";
     }
 
     if (r1.contains(peixe))
@@ -200,9 +210,11 @@ int main(int argc, char **argv)
       t3++;
     }
 
+    // cout<<"Detecta peixe\n";
     detectarpeixe(mov, video, regiao, peixe);
+    // cout<<"Detectou\n";
     trjt.push(peixe, (duration_cast<duration<double>>(high_resolution_clock::now() - t)).count());
-    
+
     desenha_cruz(peixe, video, {0, 0, (unsigned char)cor_de_mel});
     rectangle(video, regiao, Scalar(0, 255, 0), 1, LINE_8, 0);
     rectangle(video, atbg, Scalar(255, 0, 255), 1, LINE_8, 0);
@@ -242,7 +254,7 @@ int main(int argc, char **argv)
     //
     // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
-    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << " i: " << i << " estado: " << desenhaEstado << "\n";
+    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << " i: " << i << "\n";
 
     i++;
   }
