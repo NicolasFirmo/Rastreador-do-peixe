@@ -1,6 +1,6 @@
 -cerr<<
 -#include <optional> (c++17)
--Quanto tempo o mapa de calor aguenta rodar?
+-[OK] Quanto tempo o mapa de calor aguenta rodar?
 -Smart pointers (podem acabar de vez com os bugs)
 -Melhorar desempenho
 -[OK] Multithread
@@ -9,7 +9,7 @@
 -[OK] Ajeitar as transparências dos botões
 -[OK] Ajeitar o escopo do slider
 -Botões com texto
--Definir regiões com o mouse
+-[OK] Definir regiões com o mouse
 -Regiões de interesse, regiões de detecção
 -[OK] Sincronizar o tempo
 -Conseguir determinar a velocidade máxima

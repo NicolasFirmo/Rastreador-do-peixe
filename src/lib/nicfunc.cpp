@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 #include "nicfunc.h"
-#define NDEBUG
+// #define NDEBUG
 #include <assert.h>
 
 using namespace cv;
@@ -119,11 +119,10 @@ void lookup(Mat a, Mat lut, Mat b)
   }
 }
 
-void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux)
+void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux, unsigned long &t_desenhandoMCU)
 {
   // cout << "desenha MdC\n";
-
-  for (unsigned int j = 0; j < i; j++)
+  while (!trjt.empty())
   {
     // cout << "pos x,y: " << trjt.front().pos.x << "," << trjt.front().pos.y << endl;
     int map_X = trjt.front().pos.x - circulo.cols / 2 <= 0 ? 0 : trjt.front().pos.x - circulo.cols / 2;
@@ -132,14 +131,16 @@ void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, M
     int c_Y = trjt.front().pos.y - circulo.rows / 2 <= 0 ? trjt.front().pos.y : 0;
     int wid = trjt.front().pos.x + circulo.cols / 2 >= mapa_de_calor.cols ? mapa_de_calor.cols - trjt.front().pos.x : trjt.front().pos.x - circulo.cols / 2 <= 0 ? circulo.cols - trjt.front().pos.x : circulo.cols;
     int hei = trjt.front().pos.y + circulo.rows / 2 >= mapa_de_calor.rows ? mapa_de_calor.rows - trjt.front().pos.y : trjt.front().pos.y - circulo.rows / 2 <= 0 ? circulo.rows - trjt.front().pos.y : circulo.rows;
-    
+
     outdata << trjt.front().pos.x << "\t" << trjt.front().pos.y << "\t" << trjt.front().tempo << "\t" << trjt.front().vel << endl;
     add(mapa_de_calor(Rect(map_X, map_Y, wid, hei)),
         circulo(Rect(c_X, c_Y, wid, hei)),
         mapa_de_calor(Rect(map_X, map_Y, wid, hei)));
     trjt.pop();
+    t_desenhandoMCU++;
   }
   normalize(mapa_de_calor, mcu, 0, 65536, NORM_MINMAX, CV_16U);
+  GaussianBlur(mcu, mcu, Size(3, 3), 0, 0);
   lookup(mcu, lut, mcu_aux);
   // cout << "terminou de desenhar MdC\n";
 

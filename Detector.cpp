@@ -1,7 +1,8 @@
-#define NDEBUG
+// #define NDEBUG
 #include <assert.h>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstdlib>
 #include <opencv2/opencv.hpp>
 #include <string>
@@ -10,7 +11,7 @@
 #include <vector>
 #include <thread>
 #include <functional>
-#include "gui.h"
+#include "GUI.h"
 #include "nicfunc.h"
 #include <chrono>
 #include <unistd.h>
@@ -19,6 +20,12 @@ using namespace cv;
 using namespace std;
 
 static thread *desenha = nullptr;
+static thread *WMCU = nullptr;
+static unsigned int t_WMCU = 3600; // segundos
+
+static const string path_data = "./data/";
+static const string path_GUI = "./src/GUI/";
+static const string path_exs = "./src/Exemplos/";
 
 static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
 {
@@ -28,7 +35,91 @@ static std::string timePointAsString(const std::chrono::high_resolution_clock::t
   return ts;
 }
 
+void WriteMcU(Mat mapa_de_calor, Mat mcu_aux, int &j, bool &WR, Mat legenda, unsigned long &t_desenhandoMCU)
+{
+  using namespace std::this_thread;     // sleep_for, sleep_until
+  using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+  auto t = std::chrono::high_resolution_clock::now();
+
+  if (WR)
+  {
+    WR = false;
+  }
+  else
+  {
+    WR = true;
+  }
+
+  if (!j)
+  {
+    sleep_until(t + 1s);
+    j++;
+    WR = true;
+    return;
+  }
+
+  double max;
+  minMaxLoc(mapa_de_calor, NULL, &max);
+
+  legenda.copyTo(mcu_aux(Rect(Point(20, mapa_de_calor.rows - 20 - legenda.rows), legenda.size())));
+
+  for (int i = 0; i <= 10 * 10000; i += 10000)
+  {
+    int NdD = 0;
+    int result = (((int)max) * (i / 10)) / t_desenhandoMCU;
+    int test = result;
+    // cout << "i = " << i << endl
+    //      << endl;
+    // cout << "((int)max): " << ((int)max) << endl;
+    // cout << "(i / 9): " << (i / 9) << endl;
+    // cout << "(((int)max) * (i / 9)): " << (((int)max) * (i / 9)) << endl;
+    // cout << "((int)max): " << (((int)max) * (i / 9)) / t_desenhandoMCU << endl;
+    // cout << string(5, '\n');
+
+    do
+    {
+      test /= 10;
+      NdD++;
+    } while (test);
+
+    // cout << "NdD: " << NdD << endl;
+    // cout << "result: " << max << endl;
+
+    string numero = "-" + string(5 - NdD, ' ');
+    numero.insert(6 - NdD, to_string(result));
+    numero.insert(4, ",");
+    numero.insert(7, "%");
+    putText(mcu_aux, i ? numero : "-  0,00%", Point(18, mapa_de_calor.rows - 8 + -i / 10000 * 33), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(255, 255, 255));
+    assert(result <= 10000);
+  }
+  string nome = timePointAsString(std::chrono::high_resolution_clock::now()) + " | Mdc_" + ".png";
+  nome.insert(nome.size() - 4, WR ? "FINAL" : to_string(j));
+  // imwrite(nome, mcu_aux);
+  imwrite(path_data + "img/" + nome, mcu_aux);
+  // imwrite("img/"+nome, mcu_aux);
+  // imwrite("/img/"+nome, mcu_aux);
+  // imwrite("/home/nicolas/Projetos/Rastrear peixe/img/"+nome, mcu_aux);
+
+  j++;
+  // cout << "t_DEs " << t_desenhandoMCU << endl;
+  // cout << "max " << max << endl;
+  sleep_until(t + 1s);
+  t_desenhandoMCU = 0;
+  mapa_de_calor = Mat::zeros(mapa_de_calor.size(), mapa_de_calor.type());
+  WR = true;
+  return;
+}
+
 //------------------------------Funções dos elementos da GUI------------------------------
+
+void bt_rect(bool &b, void *userdata)
+{
+  if (b)
+  {
+    *((bool *)userdata) = true;
+  }
+  return;
+}
 
 void bt_a(bool &b, void *userdata)
 {
@@ -88,7 +179,7 @@ int main(int argc, char **argv)
   using namespace std::chrono;
 
   // Matrizes
-  // VideoCapture cap("Exemplo/Video 177.wmv");
+  // VideoCapture cap(path_exs+"Video 177.wmv");
   VideoCapture cap(0);
   const int width = cap.get(CAP_PROP_FRAME_WIDTH);
   const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
@@ -96,14 +187,18 @@ int main(int argc, char **argv)
   Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
   Mat princ(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
   Mat princ_bg(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
-  Mat lut = imread("mapa_de_cor.png");
+  Mat lut = imread(path_GUI + "mapa_de_cor.png");
+  Mat legenda_IMG = imread(path_GUI + "Legenda_img.png");
 
   // variáveis de controle
+  bool mcuWriteReady;
   Point peixe(width / 2, height / 2);
   Rect regiao((height - det_tam) / 2, (width - det_tam) / 2, det_tam, det_tam);
   Rect atbg((height - det_tam) / 2, (width - det_tam) / 2, det_tam, det_tam);
-  int i = 0;
+  unsigned int i = 0;
+  int j = 0;
   char key;
+  unsigned long t_desenhandoMCU = 1; // segundos
 
   // variáveis de dado
   Trajetoria<10> trjt;
@@ -122,15 +217,14 @@ int main(int argc, char **argv)
   char sw_tela = 0;
   bool desenha_gui = true;
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
-  circle(circulo, Point(circulo.rows / 2, circulo.rows / 2), det_tam / 6, 5, -1, 8, 0);
-  GaussianBlur(circulo, circulo, Size(21, 21), 0, 0);
+  circle(circulo, Point(circulo.rows / 2, circulo.rows / 2), det_tam / 6, 1, -1, 8, 0);
 
   cout << fixed;
   cout << setprecision(2);
   outdata << fixed;
   outdata << setprecision(2);
 
-  outdata.open("dados.txt", ios::trunc); // abre o arquivo de salvamento dos dados
+  outdata.open(path_data + "dados.txt", ios::trunc); // abre o arquivo de salvamento dos dados
   if (!outdata)
   { // erro se o arquivo não pôde ser aberto
     cerr << "Error: file could not be opened" << endl;
@@ -169,12 +263,14 @@ int main(int argc, char **argv)
   atbg.x = regiao.x;
   atbg.y = regiao.y;
 
-  Botao bta(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
-  Botao btb(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
-  Botao btc(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
-  Botao btd(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
-  Switch btmira(imread("GUI/Botao/bt1.png", IMREAD_UNCHANGED), imread("GUI/Botao/bt2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
-  Slider btsl(imread("GUI/Slider/bt3.png", IMREAD_UNCHANGED), imread("GUI/Slider/bt4.png", IMREAD_UNCHANGED), imread("GUI/Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
+  Botao btRect(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_rect, Point(10, 210), princ, &gg.cria_rect);
+  Botao bta(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
+  Botao btb(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
+  Botao btc(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
+  Botao btd(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
+  Switch btmira(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
+  Slider btsl(imread(path_GUI + "Slider/bt3.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/bt4.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
+  gg.insert(&btRect);
   gg.insert(&bta);
   gg.insert(&btb);
   gg.insert(&btc);
@@ -193,9 +289,18 @@ int main(int argc, char **argv)
     {
       outdata << timePointAsString(high_resolution_clock::now()) << endl;
       outdata.close();
-      imwrite("MdC.png", mcu_aux);
+      WriteMcU(mapa_de_calor, mcu_aux.clone(), j, mcuWriteReady = false, legenda_IMG, t_desenhandoMCU);
       break; // pressionar esc para sair
+    } else if (key == 'd')
+    {
+     cout<<"del\n";
+      gg.pop_rect();
+    } else if (key == 'c')
+    {
+      cout<<"cria_rect\n";
+      gg.cria_rect = true;
     }
+    
 
     // cout << "atualiza bg\n";
     if (!atbg.contains(peixe))
@@ -218,14 +323,14 @@ int main(int argc, char **argv)
     assert(peixe.x < video.cols);
     assert(peixe.y < video.rows);
 
-    if (i == trjt_size)
+    if (i >= trjt_size && mcuWriteReady)
     { // desenha o mapa de calor
       if (desenha != nullptr)
       {
         desenha->join();
         delete desenha;
       }
-      desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux);
+      desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux, std::ref(t_desenhandoMCU));
       trjt.reset();
       i = 0;
     }
@@ -299,15 +404,20 @@ int main(int argc, char **argv)
     //
     // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
-    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
+    // cout << "segundos: " << (int)trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
+    // outdata << timePointAsString(high_resolution_clock::now()) << endl;
 
     i++;
+    if ((duration_cast<duration<int>>(high_resolution_clock::now() - t)).count() % t_WMCU == 0 && mcuWriteReady)
+    {
+      WMCU = new thread(WriteMcU, mapa_de_calor, mcu_aux.clone(), std::ref(j), std::ref(mcuWriteReady), legenda_IMG, std::ref(t_desenhandoMCU));
+    }
   }
 
   return 0;
 }
 
-//salva imagens periodicamente
+// salva imagens periodicamente
 // if(i%60==0){
 //   nome = ".png";
 //   nome.insert(0,to_string(j));

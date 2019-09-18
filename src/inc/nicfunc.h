@@ -73,6 +73,7 @@ public:
   inline Dado front() { return m_Dados.front(); }
   inline Dado back() { return m_Dados.back(); }
   inline void pop() { m_Dados.pop(); }
+  inline bool empty(){ return m_Dados.empty();}
 
 private:
   inline void atbufferindx()
@@ -82,5 +83,5 @@ private:
   }
 };
 
-void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux);
+void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux, unsigned long &t_desenhandoMCU);
 #endif
