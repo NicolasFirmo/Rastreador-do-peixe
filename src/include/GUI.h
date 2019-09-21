@@ -43,6 +43,7 @@ public:
   Rect *c_rect;
   int s_rect_it;
   clickmode click_mode;
+  Point p0;
 
   void insert(Botao *bt);
   void insert(Slider *sl);

@@ -16,6 +16,7 @@ GUI::GUI(Point &peixe, Rect &regiao) : p(peixe), reg(regiao), c_rect(nullptr), s
 
 void GUI::create_rect(int x, int y)
 {
+  p0 = Point(x, y);
   c_rect = new Rect(x, y, 0, 0);
 }
 
@@ -37,8 +38,31 @@ void GUI::scale_rect(int x, int y)
 {
   if (!c_rect)
     return;
-  c_rect->width = x - c_rect->x;
-  c_rect->height = y - c_rect->y;
+  if (x >= p0.x && y >= p0.y)
+  {
+    c_rect->x = p0.x;
+    c_rect->y = p0.y;
+    c_rect->width = x - p0.x;
+    c_rect->height = y - p0.y;
+  }else if (x >= p0.x && y < p0.y)
+  {
+    c_rect->x = p0.x;
+    c_rect->y = y;
+    c_rect->width = x - p0.x;
+    c_rect->height = p0.y - y;
+  }else if (x < p0.x && y >= p0.y)
+  {
+    c_rect->x = x;
+    c_rect->y = p0.y;
+    c_rect->width = p0.x - x;
+    c_rect->height = y - p0.y;
+  }else
+  {
+    c_rect->x = x;
+    c_rect->y = y;
+    c_rect->width = p0.x - x;
+    c_rect->height = p0.y - y;
+  }
 }
 
 void GUI::save_rect()
