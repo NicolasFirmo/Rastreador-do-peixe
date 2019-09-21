@@ -3,7 +3,7 @@
 
 CC = gcc
 GCC = g++
-INCS = ./src/inc/
+INCS = ./src/include/
 LIBDIR = ./src/lib/
 LIBS = $(LIBDIR)GUI.cpp $(LIBDIR)nicfunc.cpp $(LIBDIR)Botao.cpp $(LIBDIR)Slider.cpp $(LIBDIR)Switch.cpp
 

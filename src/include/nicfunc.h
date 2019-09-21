@@ -4,7 +4,14 @@
 #ifndef NICFUNC_H
 #define NICFUNC_H
 #include <cmath>
+#include <chrono>
+#include <string>
+#include <thread>
 
+using namespace cv;
+using namespace std;
+
+static const string path_data = "./data/";
 static unsigned int const mask_t = 30;
 static unsigned int const peixe_V = 85;
 static unsigned int const peixe_OS = 40;
@@ -14,12 +21,17 @@ static unsigned int const vel_rep = 1;
 static unsigned int const vel_info_at = 1;
 static unsigned int const trjt_size = 5;
 
-using namespace cv;
-using namespace std;
-
 void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p);
 void desenha_cruz(Point &c, Mat a, Vec3b cor);
 void lookup(Mat a, Mat lut, Mat b);
+
+static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
+{
+  std::time_t tt = std::chrono::high_resolution_clock::to_time_t(t);
+  std::string ts = std::ctime(&tt);
+  ts.resize(ts.size() - 1);
+  return ts;
+}
 
 struct Dado
 {
@@ -84,4 +96,5 @@ private:
 };
 
 void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, Mat mapa_de_calor, Mat circulo, Mat mcu, Mat lut, Mat mcu_aux, unsigned long &t_desenhandoMCU);
+void WriteMcU(Mat mapa_de_calor, Mat mcu_aux, int &j, bool &WR, Mat legenda, unsigned long &t_desenhandoMCU);
 #endif

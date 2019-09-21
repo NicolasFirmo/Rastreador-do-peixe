@@ -1,31 +1,54 @@
 #ifndef GUI_H
+
+#include <vector>
+#include <chrono>
+#include <thread>
+#include <functional>
+#include "nicfunc.h"
+#include "Botao.h"
+#include "Slider.h"
+#include "Switch.h"
 #define GUI_H
 
 using namespace cv;
 using namespace std;
 
-#include <vector>
-#include <list>
-#include "Botao.h"
-#include "Slider.h"
-#include "Switch.h"
+enum clickmode
+{
+  CRIA_RECT,
+  SELECT_RECT,
+  POINT_PEIXE
+};
+
+struct Regiao
+{
+  Rect *rect;
+  unsigned char type;
+  std::chrono::nanoseconds t;
+  std::chrono::time_point<std::chrono::_V2::system_clock, std::chrono::nanoseconds> t0;
+  bool contemPeixe;
+
+  inline Regiao(Rect *r) : rect(r), type(4), t(0), t0(std::chrono::high_resolution_clock::now()), contemPeixe(false) {}
+};
 
 class GUI
 {
 public:
+  Point &p;
+  Rect &reg;
   vector<Botao *> botoes;
   vector<Slider *> sliders;
   vector<Switch *> switches;
-  vector<Rect *> rects;
+  vector<Regiao> rects;
   Rect *c_rect;
   int s_rect_it;
-  bool cria_rect;
+  clickmode click_mode;
 
   void insert(Botao *bt);
   void insert(Slider *sl);
   void insert(Switch *sw);
 
-  GUI();
+  GUI(Point &peixe, Rect &regiao);
 
   void create_rect(int x, int y);
 
@@ -36,6 +59,12 @@ public:
   void save_rect();
 
   void pop_rect();
+
+  void setSetectedType(unsigned char type);
+
+  void computaTempo(const Point &p);
+
+  void zeraCont();
 
   void mostrar();
 

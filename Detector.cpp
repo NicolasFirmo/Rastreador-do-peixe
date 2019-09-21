@@ -22,93 +22,8 @@ using namespace std;
 static thread *desenha = nullptr;
 static thread *WMCU = nullptr;
 static unsigned int t_WMCU = 3600; // segundos
-
-static const string path_data = "./data/";
 static const string path_GUI = "./src/GUI/";
 static const string path_exs = "./src/Exemplos/";
-
-static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
-{
-  std::time_t tt = std::chrono::high_resolution_clock::to_time_t(t);
-  std::string ts = std::ctime(&tt);
-  ts.resize(ts.size() - 1);
-  return ts;
-}
-
-void WriteMcU(Mat mapa_de_calor, Mat mcu_aux, int &j, bool &WR, Mat legenda, unsigned long &t_desenhandoMCU)
-{
-  using namespace std::this_thread;     // sleep_for, sleep_until
-  using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
-  auto t = std::chrono::high_resolution_clock::now();
-
-  if (WR)
-  {
-    WR = false;
-  }
-  else
-  {
-    WR = true;
-  }
-
-  if (!j)
-  {
-    sleep_until(t + 1s);
-    j++;
-    WR = true;
-    return;
-  }
-
-  double max;
-  minMaxLoc(mapa_de_calor, NULL, &max);
-
-  legenda.copyTo(mcu_aux(Rect(Point(20, mapa_de_calor.rows - 20 - legenda.rows), legenda.size())));
-
-  for (int i = 0; i <= 10 * 10000; i += 10000)
-  {
-    int NdD = 0;
-    int result = (((int)max) * (i / 10)) / t_desenhandoMCU;
-    int test = result;
-    // cout << "i = " << i << endl
-    //      << endl;
-    // cout << "((int)max): " << ((int)max) << endl;
-    // cout << "(i / 9): " << (i / 9) << endl;
-    // cout << "(((int)max) * (i / 9)): " << (((int)max) * (i / 9)) << endl;
-    // cout << "((int)max): " << (((int)max) * (i / 9)) / t_desenhandoMCU << endl;
-    // cout << string(5, '\n');
-
-    do
-    {
-      test /= 10;
-      NdD++;
-    } while (test);
-
-    // cout << "NdD: " << NdD << endl;
-    // cout << "result: " << max << endl;
-
-    string numero = "-" + string(5 - NdD, ' ');
-    numero.insert(6 - NdD, to_string(result));
-    numero.insert(4, ",");
-    numero.insert(7, "%");
-    putText(mcu_aux, i ? numero : "-  0,00%", Point(18, mapa_de_calor.rows - 8 + -i / 10000 * 33), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(255, 255, 255));
-    assert(result <= 10000);
-  }
-  string nome = timePointAsString(std::chrono::high_resolution_clock::now()) + " | Mdc_" + ".png";
-  nome.insert(nome.size() - 4, WR ? "FINAL" : to_string(j));
-  // imwrite(nome, mcu_aux);
-  imwrite(path_data + "img/" + nome, mcu_aux);
-  // imwrite("img/"+nome, mcu_aux);
-  // imwrite("/img/"+nome, mcu_aux);
-  // imwrite("/home/nicolas/Projetos/Rastrear peixe/img/"+nome, mcu_aux);
-
-  j++;
-  // cout << "t_DEs " << t_desenhandoMCU << endl;
-  // cout << "max " << max << endl;
-  sleep_until(t + 1s);
-  t_desenhandoMCU = 0;
-  mapa_de_calor = Mat::zeros(mapa_de_calor.size(), mapa_de_calor.type());
-  WR = true;
-  return;
-}
 
 //------------------------------Funções dos elementos da GUI------------------------------
 
@@ -116,7 +31,7 @@ void bt_rect(bool &b, void *userdata)
 {
   if (b)
   {
-    *((bool *)userdata) = true;
+    *((clickmode *)userdata) = CRIA_RECT;
   }
   return;
 }
@@ -179,8 +94,8 @@ int main(int argc, char **argv)
   using namespace std::chrono;
 
   // Matrizes
-  // VideoCapture cap(path_exs+"Video 177.wmv");
-  VideoCapture cap(0);
+  VideoCapture cap(path_exs + "Video 177.wmv");
+  // VideoCapture cap(0);
   const int width = cap.get(CAP_PROP_FRAME_WIDTH);
   const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   Mat video(height, width, CV_8UC3), bg(height, width, CV_8UC3), mov(height, width, CV_8UC3), mov_aux(height, width, CV_8UC3), mov_ant(height, width, CV_8UC3), mcu(height, width, CV_8UC3), mcu_aux(height, width, CV_8UC3);
@@ -202,17 +117,10 @@ int main(int argc, char **argv)
 
   // variáveis de dado
   Trajetoria<10> trjt;
-  // Rect Reg_det[2]; Área de varredura
-  // Reg_det[0] = Rect(23,259,600,80);
-  // Reg_det[1] = Rect(281,13,80,240);
-  Rect r1(281, 13, 80, 240);
-  Rect r2(23, 259, 250, 80);
-  Rect r3(366, 259, 250, 80);
-  double t1 = 0, t2 = 0, t3 = 0;
   ofstream outdata; // outdata is like cin
 
   //variáveis da GUI
-  GUI gg;
+  GUI gg(peixe, regiao);
   float cor_de_mel = 0;
   char sw_tela = 0;
   bool desenha_gui = true;
@@ -263,7 +171,7 @@ int main(int argc, char **argv)
   atbg.x = regiao.x;
   atbg.y = regiao.y;
 
-  Botao btRect(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_rect, Point(10, 210), princ, &gg.cria_rect);
+  Botao btRect(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_rect, Point(10, 210), princ, &gg.click_mode);
   Botao bta(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
   Botao btb(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
   Botao btc(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
@@ -284,23 +192,51 @@ int main(int argc, char **argv)
     cap >> video;
     absdiff(bg, video, mov);
 
-    key = (char)waitKey(10);
+    key = (char)waitKey(1);
     if (key == 27)
     {
       outdata << timePointAsString(high_resolution_clock::now()) << endl;
       outdata.close();
       WriteMcU(mapa_de_calor, mcu_aux.clone(), j, mcuWriteReady = false, legenda_IMG, t_desenhandoMCU);
       break; // pressionar esc para sair
-    } else if (key == 'd')
-    {
-     cout<<"del\n";
-      gg.pop_rect();
-    } else if (key == 'c')
-    {
-      cout<<"cria_rect\n";
-      gg.cria_rect = true;
     }
-    
+    else if (key == 'd')
+    {
+      cout << "del\n";
+      gg.pop_rect();
+    }
+    else if (key == 'c')
+    {
+      cout << "cria_rect\n";
+      gg.click_mode = CRIA_RECT;
+    }
+    else if (key == 'i')
+    {
+      cout << "set i\n";
+      gg.setSetectedType(0);
+    }
+    else if (key == 'o')
+    {
+      cout << "set o\n";
+      gg.setSetectedType(1);
+    }
+    else if (key == 'p')
+    {
+      cout << "set p\n";
+      gg.setSetectedType(2);
+    }
+    else if (key == 'z')
+    {
+      cout << "zera\n";
+      gg.zeraCont();
+    }
+    else if (key == 'b')
+    {
+      cout << "zera\n";
+      gg.click_mode = POINT_PEIXE;
+    }
+
+    gg.computaTempo(peixe);
 
     // cout << "atualiza bg\n";
     if (!atbg.contains(peixe))
@@ -333,19 +269,6 @@ int main(int argc, char **argv)
       desenha = new thread(desenhaMdC, i, std::ref(outdata), trjt, mapa_de_calor, circulo, mcu, lut, mcu_aux, std::ref(t_desenhandoMCU));
       trjt.reset();
       i = 0;
-    }
-
-    if (r1.contains(peixe))
-    {
-      t1++;
-    }
-    else if (r2.contains(peixe))
-    {
-      t2++;
-    }
-    else if (r3.contains(peixe))
-    {
-      t3++;
     }
 
     // cout<<"Detecta peixe\n";
@@ -388,9 +311,6 @@ int main(int argc, char **argv)
       desenha_cruz(peixe, princ(Rect(200, 0, width, height)), {0, 0, (unsigned char)cor_de_mel});
       rectangle(princ, regiao + Point(200, 0), Scalar(0, 255, 0), 1, LINE_8, 0);
       rectangle(princ, atbg + Point(200, 0), Scalar(255, 0, 255), 1, LINE_8, 0);
-      rectangle(princ, r1 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
-      rectangle(princ, r2 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
-      rectangle(princ, r3 + Point(200, 0), Scalar(255, 0, 0), 1, LINE_8, 0);
       cv::line(princ, Point(230, 350), Point(230 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
     }
     // cout<<"gui desenhado\n";
@@ -404,7 +324,7 @@ int main(int argc, char **argv)
     //
     // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
-    // cout << "segundos: " << (int)trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
+    cout << "segundos: " << (int)trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
     // outdata << timePointAsString(high_resolution_clock::now()) << endl;
 
     i++;

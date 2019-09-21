@@ -1,7 +1,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <opencv2/opencv.hpp>
-#include <string>
 #include <iomanip>
 #include <cmath>
 #include <vector>
@@ -140,9 +139,85 @@ void desenhaMdC(const unsigned int &i, ofstream &outdata, Trajetoria<10> trjt, M
     t_desenhandoMCU++;
   }
   normalize(mapa_de_calor, mcu, 0, 65536, NORM_MINMAX, CV_16U);
-  GaussianBlur(mcu, mcu, Size(3, 3), 0, 0);
+  GaussianBlur(mcu, mcu, Size(7, 7), 0, 0);
   lookup(mcu, lut, mcu_aux);
   // cout << "terminou de desenhar MdC\n";
 
+  return;
+}
+
+
+void WriteMcU(Mat mapa_de_calor, Mat mcu_aux, int &j, bool &WR, Mat legenda, unsigned long &t_desenhandoMCU)
+{
+  using namespace std::this_thread;     // sleep_for, sleep_until
+  using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
+  auto t = std::chrono::high_resolution_clock::now();
+
+  if (WR)
+  {
+    WR = false;
+  }
+  else
+  {
+    WR = true;
+  }
+
+  if (!j)
+  {
+    sleep_until(t + 1s);
+    j++;
+    WR = true;
+    return;
+  }
+
+  double max;
+  minMaxLoc(mapa_de_calor, NULL, &max);
+
+  legenda.copyTo(mcu_aux(Rect(Point(20, mapa_de_calor.rows - 20 - legenda.rows), legenda.size())));
+
+  for (int i = 0; i <= 10 * 10000; i += 10000)
+  {
+    int NdD = 0;
+    int result = (((int)max) * (i / 10)) / t_desenhandoMCU;
+    int test = result;
+    // cout << "i = " << i << endl
+    //      << endl;
+    // cout << "((int)max): " << ((int)max) << endl;
+    // cout << "(i / 9): " << (i / 9) << endl;
+    // cout << "(((int)max) * (i / 9)): " << (((int)max) * (i / 9)) << endl;
+    // cout << "((int)max): " << (((int)max) * (i / 9)) / t_desenhandoMCU << endl;
+    // cout << string(5, '\n');
+
+    do
+    {
+      test /= 10;
+      NdD++;
+    } while (test);
+
+    // cout << "NdD: " << NdD << endl;
+    // cout << "result: " << max << endl;
+
+    string numero = "-" + string(5 - NdD, ' ');
+    numero.insert(6 - NdD, to_string(result));
+    numero.insert(4, ",");
+    numero.insert(7, "%");
+    putText(mcu_aux, i ? numero : "-  0,00%", Point(18, mapa_de_calor.rows - 8 + -i / 10000 * 33), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(255, 255, 255));
+    assert(result <= 10000);
+  }
+  string nome = timePointAsString(std::chrono::high_resolution_clock::now()) + " | Mdc_" + ".png";
+  nome.insert(nome.size() - 4, WR ? "FINAL" : to_string(j));
+  // imwrite(nome, mcu_aux);
+  imwrite(path_data + "img/" + nome, mcu_aux);
+  // imwrite("img/"+nome, mcu_aux);
+  // imwrite("/img/"+nome, mcu_aux);
+  // imwrite("/home/nicolas/Projetos/Rastrear peixe/img/"+nome, mcu_aux);
+
+  j++;
+  // cout << "t_DEs " << t_desenhandoMCU << endl;
+  // cout << "max " << max << endl;
+  sleep_until(t + 1s);
+  t_desenhandoMCU = 0;
+  mapa_de_calor = Mat::zeros(mapa_de_calor.size(), mapa_de_calor.type());
+  WR = true;
   return;
 }
