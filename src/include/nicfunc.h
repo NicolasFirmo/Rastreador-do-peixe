@@ -11,6 +11,14 @@
 using namespace cv;
 using namespace std;
 
+static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
+{
+  std::time_t tt = std::chrono::high_resolution_clock::to_time_t(t);
+  std::string ts = std::ctime(&tt);
+  ts.resize(ts.size() - 1);
+  return ts;
+}
+
 static const string path_data = "./data/";
 static unsigned int const mask_t = 30;
 static unsigned int const peixe_V = 85;
@@ -24,14 +32,6 @@ static unsigned int const trjt_size = 5;
 void detectarpeixe(Mat a, Mat b, Rect &reg, Point &p);
 void desenha_cruz(Point &c, Mat a, Vec3b cor);
 void lookup(Mat a, Mat lut, Mat b);
-
-static std::string timePointAsString(const std::chrono::high_resolution_clock::time_point &t)
-{
-  std::time_t tt = std::chrono::high_resolution_clock::to_time_t(t);
-  std::string ts = std::ctime(&tt);
-  ts.resize(ts.size() - 1);
-  return ts;
-}
 
 struct Dado
 {
@@ -85,7 +85,7 @@ public:
   inline Dado front() { return m_Dados.front(); }
   inline Dado back() { return m_Dados.back(); }
   inline void pop() { m_Dados.pop(); }
-  inline bool empty(){ return m_Dados.empty();}
+  inline bool empty() { return m_Dados.empty(); }
 
 private:
   inline void atbufferindx()

@@ -177,7 +177,7 @@ void GUI::computaTempo(const Point &p)
 {
   for (unsigned i = 0; i < rects.size(); i++)
   {
-    if (rects[i].rect->contains(p + Point(200, 0)) && !rects[i].type)
+    if (rects[i].rect->contains(p + Point(menu_width, 0)) && !rects[i].type)
     {
       for (unsigned i = 0; i < rects.size(); i++)
       {
@@ -198,12 +198,12 @@ void GUI::computaTempo(const Point &p)
       continue;
     // cout << "p: " << p.x << p.y << endl;
     // cout << "rect xywh:" << rects[i].rect->tl().x << " " << rects[i].rect->tl().y << " " << rects[i].rect->width << " " << rects[i].rect->height << endl;
-    if (rects[i].rect->contains(p + Point(200, 0)) && !rects[i].contemPeixe)
+    if (rects[i].rect->contains(p + Point(menu_width, 0)) && !rects[i].contemPeixe)
     {
       rects[i].contemPeixe = true;
       rects[i].t0 = std::chrono::high_resolution_clock::now();
     }
-    else if (!rects[i].rect->contains(p + Point(200, 0)) && rects[i].contemPeixe)
+    else if (!rects[i].rect->contains(p + Point(menu_width, 0)) && rects[i].contemPeixe)
     {
       rects[i].contemPeixe = false;
       rects[i].t += std::chrono::high_resolution_clock::now() - rects[i].t0;
@@ -278,7 +278,7 @@ void gui_func(int event, int x, int y, int flags, void *userdata)
       gui->select_rect(x, y);
     else if (gui->click_mode == POINT_PEIXE)
     {
-      gui->p.x = x - 200;
+      gui->p.x = x - menu_width;
       gui->p.y = y;
       int n_regX = (gui->p.x - det_tam / 2) < 0 ? 0 : gui->p.x + det_tam / 2 >= gui->botoes[0]->tela.cols ? gui->botoes[0]->tela.cols - det_tam - 1 : (gui->p.x - det_tam / 2);
       int n_regY = (gui->p.y - det_tam / 2) < 0 ? 0 : gui->p.y + det_tam / 2 >= gui->botoes[0]->tela.rows ? gui->botoes[0]->tela.rows - det_tam - 1 : (gui->p.y - det_tam / 2);

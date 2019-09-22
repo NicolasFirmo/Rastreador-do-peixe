@@ -100,8 +100,8 @@ int main(int argc, char **argv)
   const int height = cap.get(CAP_PROP_FRAME_HEIGHT);
   Mat video(height, width, CV_8UC3), bg(height, width, CV_8UC3), mov(height, width, CV_8UC3), mov_aux(height, width, CV_8UC3), mov_ant(height, width, CV_8UC3), mcu(height, width, CV_8UC3), mcu_aux(height, width, CV_8UC3);
   Mat mapa_de_calor(height, width, CV_16UC1, Scalar(0));
-  Mat princ(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
-  Mat princ_bg(height, width + 200, CV_8UC3, Scalar(255, 230, 200));
+  Mat princ(height, width + menu_width, CV_8UC3);
+  Mat princ_bg(height, menu_width, CV_8UC3, Scalar(255, 230, 200));
   Mat lut = imread(path_GUI + "mapa_de_cor.png");
   Mat legenda_IMG = imread(path_GUI + "Legenda_img.png");
 
@@ -172,19 +172,19 @@ int main(int argc, char **argv)
   atbg.y = regiao.y;
 
   Botao btRect(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_rect, Point(10, 210), princ, &gg.click_mode);
-  Botao bta(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
-  Botao btb(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
-  Botao btc(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
-  Botao btd(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
-  Switch btmira(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
-  Slider btsl(imread(path_GUI + "Slider/bt3.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/bt4.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
+  Botao bt_vi(imread(path_GUI + "Botao/vi1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/vi2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
+  //Botao bt_mv(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
+  Botao bt_mc(imread(path_GUI + "Botao/mc1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/mc2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
+  Botao bt_bg(imread(path_GUI + "Botao/bg1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bg2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
+  Switch bt_gui(imread(path_GUI + "Botao/gui1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/gui2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
+  //Slider btsl(imread(path_GUI + "Slider/bt3.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/bt4.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
   gg.insert(&btRect);
-  gg.insert(&bta);
-  gg.insert(&btb);
-  gg.insert(&btc);
-  gg.insert(&btd);
-  gg.insert(&btmira);
-  gg.insert(&btsl);
+  gg.insert(&bt_vi);
+  //gg.insert(&bt_mv);
+  gg.insert(&bt_mc);
+  gg.insert(&bt_bg);
+  gg.insert(&bt_gui);
+  //gg.insert(&btsl);
   setMouseCallback("princ", gui_func, &gg); //Não posso mais de uma callback por tela
 
   while (true)
@@ -282,20 +282,20 @@ int main(int argc, char **argv)
     switch (sw_tela)
     {
     case 0:
-      princ_bg.copyTo(princ);
-      video.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
+      princ_bg.copyTo(princ(Rect(0,0,menu_width,height)));
+      video.copyTo(princ(Rect(menu_width, 0, princ.cols - menu_width, princ.rows)));
       break;
     case 1:
-      princ_bg.copyTo(princ);
-      mov.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
+      princ_bg.copyTo(princ(Rect(0,0,menu_width,height)));
+      mov.copyTo(princ(Rect(menu_width, 0, princ.cols - menu_width, princ.rows)));
       break;
     case 2:
-      princ_bg.copyTo(princ);
-      mcu_aux.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
+      princ_bg.copyTo(princ(Rect(0,0,menu_width,height)));
+      mcu_aux.copyTo(princ(Rect(menu_width, 0, princ.cols - menu_width, princ.rows)));
       break;
     case 3:
-      princ_bg.copyTo(princ);
-      bg.copyTo(princ(Rect(200, 0, princ.cols - 200, princ.rows)));
+      princ_bg.copyTo(princ(Rect(0,0,menu_width,height)));
+      bg.copyTo(princ(Rect(menu_width, 0, princ.cols - menu_width, princ.rows)));
       break;
     default:
       break;
@@ -308,9 +308,9 @@ int main(int argc, char **argv)
 
     if (desenha_gui)
     {
-      desenha_cruz(peixe, princ(Rect(200, 0, width, height)), {0, 0, (unsigned char)cor_de_mel});
-      rectangle(princ, regiao + Point(200, 0), Scalar(0, 255, 0), 1, LINE_8, 0);
-      rectangle(princ, atbg + Point(200, 0), Scalar(255, 0, 255), 1, LINE_8, 0);
+      desenha_cruz(peixe, princ(Rect(menu_width, 0, width, height)), {0, 0, (unsigned char)cor_de_mel});
+      rectangle(princ, regiao + Point(menu_width, 0), Scalar(0, 255, 0), 1, LINE_8, 0);
+      rectangle(princ, atbg + Point(menu_width, 0), Scalar(255, 0, 255), 1, LINE_8, 0);
       cv::line(princ, Point(230, 350), Point(230 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
     }
     // cout<<"gui desenhado\n";

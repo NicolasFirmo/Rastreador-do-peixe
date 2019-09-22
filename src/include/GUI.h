@@ -13,6 +13,8 @@
 using namespace cv;
 using namespace std;
 
+const int menu_width = 64;
+
 enum clickmode
 {
   CRIA_RECT,
