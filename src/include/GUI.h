@@ -1,14 +1,15 @@
 #ifndef GUI_H
+#define GUI_H
 
 #include <vector>
 #include <chrono>
 #include <thread>
 #include <functional>
-#include "nicfunc.h"
-#include "Botao.h"
-#include "Slider.h"
-#include "Switch.h"
-#define GUI_H
+#include <include/nicfunc.h>
+#include <include/Botao.h>
+#include <include/Slider.h>
+#include <include/Switch.h>
+#include <include/vendor.h>
 
 using namespace cv;
 using namespace std;

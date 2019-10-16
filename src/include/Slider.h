@@ -2,7 +2,7 @@
 #define SLIDER_H
 
 #include <opencv2/opencv.hpp>
-#include "Botao.h"
+#include <include/Botao.h>
 
 using namespace cv;
 using namespace std;

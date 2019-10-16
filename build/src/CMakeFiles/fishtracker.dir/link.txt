@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfishtracker.a  CMakeFiles/fishtracker.dir/lib/Botao.cpp.o CMakeFiles/fishtracker.dir/lib/GUI.cpp.o CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o CMakeFiles/fishtracker.dir/lib/Slider.cpp.o CMakeFiles/fishtracker.dir/lib/Switch.cpp.o
+/usr/bin/ranlib libfishtracker.a

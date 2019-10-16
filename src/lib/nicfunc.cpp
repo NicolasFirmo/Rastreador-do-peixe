@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <cmath>
 #include <vector>
-#include "nicfunc.h"
+#include <include/nicfunc.h>
 // #define NDEBUG
 #include <assert.h>
 
@@ -201,7 +201,7 @@ void WriteMcU(Mat mapa_de_calor, Mat mcu_aux, int &j, bool &WR, Mat legenda, uns
     numero.insert(6 - NdD, to_string(result));
     numero.insert(4, ",");
     numero.insert(7, "%");
-    putText(mcu_aux, i ? numero : "-  0,00%", Point(18, mapa_de_calor.rows - 8 + -i / 10000 * 33), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(255, 255, 255));
+    putText(mcu_aux, i ? numero : "-  0,00%", Point(18, mapa_de_calor.rows - 8 + -i / 10000 * 33), FONT_HERSHEY_SIMPLEX, 1.2, Scalar(255, 255, 255));
     assert(result <= 10000);
   }
   string nome = timePointAsString(std::chrono::high_resolution_clock::now()) + " | Mdc_" + ".png";

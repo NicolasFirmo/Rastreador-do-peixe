@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <iostream>
 #include <fstream>
-#include <sstream>
+#include <sstream>  
 #include <cstdlib>
 #include <opencv2/opencv.hpp>
 #include <string>
@@ -11,8 +11,8 @@
 #include <vector>
 #include <thread>
 #include <functional>
-#include "GUI.h"
-#include "nicfunc.h"
+#include <include/GUI.h>
+#include <include/nicfunc.h>
 #include <chrono>
 #include <unistd.h>
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 
   //variáveis da GUI
   GUI gg(peixe, regiao);
-  float cor_de_mel = 0;
+  float cor_de_mel = 255;
   char sw_tela = 0;
   bool desenha_gui = true;
   Mat circulo(det_tam, det_tam, CV_16UC1, Scalar(0));
@@ -173,14 +173,14 @@ int main(int argc, char **argv)
 
   Botao btRect(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_rect, Point(10, 210), princ, &gg.click_mode);
   Botao bt_vi(imread(path_GUI + "Botao/vi1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/vi2.png", IMREAD_UNCHANGED), bt_a, Point(10, 10), princ, &sw_tela);
-  //Botao bt_mv(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
+  Botao bt_mv(imread(path_GUI + "Botao/bt1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bt2.png", IMREAD_UNCHANGED), bt_b, Point(10, 50), princ, &sw_tela);
   Botao bt_mc(imread(path_GUI + "Botao/mc1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/mc2.png", IMREAD_UNCHANGED), bt_c, Point(10, 90), princ, &sw_tela);
   Botao bt_bg(imread(path_GUI + "Botao/bg1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/bg2.png", IMREAD_UNCHANGED), bt_d, Point(10, 130), princ, &sw_tela);
   Switch bt_gui(imread(path_GUI + "Botao/gui1.png", IMREAD_UNCHANGED), imread(path_GUI + "Botao/gui2.png", IMREAD_UNCHANGED), sw_mira, Point(10, 170), princ, &desenha_gui, true);
   //Slider btsl(imread(path_GUI + "Slider/bt3.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/bt4.png", IMREAD_UNCHANGED), imread(path_GUI + "Slider/slm.png", IMREAD_UNCHANGED), bt_sl, Point(100, 10), 100, 0.5, princ, &cor_de_mel, 0, 255);
   gg.insert(&btRect);
   gg.insert(&bt_vi);
-  //gg.insert(&bt_mv);
+  gg.insert(&bt_mv);
   gg.insert(&bt_mc);
   gg.insert(&bt_bg);
   gg.insert(&bt_gui);
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
     cap >> video;
     absdiff(bg, video, mov);
 
-    key = (char)waitKey(1);
+    key = (char)waitKey(10);
     if (key == 27)
     {
       outdata << timePointAsString(high_resolution_clock::now()) << endl;
@@ -311,7 +311,7 @@ int main(int argc, char **argv)
       desenha_cruz(peixe, princ(Rect(menu_width, 0, width, height)), {0, 0, (unsigned char)cor_de_mel});
       rectangle(princ, regiao + Point(menu_width, 0), Scalar(0, 255, 0), 1, LINE_8, 0);
       rectangle(princ, atbg + Point(menu_width, 0), Scalar(255, 0, 255), 1, LINE_8, 0);
-      cv::line(princ, Point(230, 350), Point(230 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
+      cv::line(princ, Point(75, 350), Point(75 + trjt.back().vel / 2, 350), Scalar(0, 0, 255), 5, 8, 0); //velocímetro
     }
     // cout<<"gui desenhado\n";
 
@@ -324,7 +324,7 @@ int main(int argc, char **argv)
     //
     // cout<<"tempo em cima: "<<t1/40<<"s | tempo na esquerda: "<<t2/40<<"s | tempo na direita: "<<t3/40<<"s "<<"vel: "<<vel_at<<endl;
 
-    cout << "segundos: " << (int)trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
+    cout << "segundos: " << trjt.back().tempo << " vel: " << trjt.back().vel << "\n";
     // outdata << timePointAsString(high_resolution_clock::now()) << endl;
 
     i++;

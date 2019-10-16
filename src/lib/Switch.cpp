@@ -1,4 +1,4 @@
-#include "Switch.h"
+#include <include/Switch.h>
 
 Switch::Switch(Mat img_t, Mat img_f, void (*func)(bool &, void *), Point pos, Mat tela, void *var, const bool &sw_down) : Botao(img_t, img_f, func, pos, tela, var)
 {

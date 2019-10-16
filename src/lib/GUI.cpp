@@ -4,7 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <cmath>
-#include "GUI.h"
+#include <include/GUI.h>
 
 GUI::GUI(Point &peixe, Rect &regiao) : p(peixe), reg(regiao), c_rect(nullptr), s_rect_it(-1), click_mode(SELECT_RECT)
 {

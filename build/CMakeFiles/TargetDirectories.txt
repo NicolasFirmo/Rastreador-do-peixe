@@ -1,0 +1,11 @@
+/home/nicolas/dev/Rastrear peixe/build/CMakeFiles/rebuild_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/CMakeFiles/edit_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/rebuild_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/vendor.dir
+/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/edit_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/rebuild_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir
+/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/edit_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/Detect/CMakeFiles/rebuild_cache.dir
+/home/nicolas/dev/Rastrear peixe/build/Detect/CMakeFiles/exe.dir
+/home/nicolas/dev/Rastrear peixe/build/Detect/CMakeFiles/edit_cache.dir

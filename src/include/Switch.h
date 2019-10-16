@@ -1,7 +1,7 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
-#include "Botao.h"
+#include <include/Botao.h>
 
 using namespace cv;
 using namespace std;

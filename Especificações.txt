@@ -2,6 +2,7 @@
 -#include <optional> (c++17)
 -[OK] Quanto tempo o mapa de calor aguenta rodar?
 -Smart pointers (podem acabar de vez com os bugs)
+-Play e pause na detecção
 -Melhorar desempenho
 -[OK] Multithread
 -[OK] Organizar o programe e as classes em arquivos separados (como compilar?)
@@ -15,6 +16,27 @@
 -Conseguir determinar a velocidade máxima
 -[OK] Amortecer os dados: vel atual, descartar pontos fora
 -GUI:
+-Pôr escala do mapa de calor fora da região de detecção
+-Bloco de configuração
+-Definir intervalo de salvamento do mapa de calor
 Botões quase O.K.
 Deixar mais bonito
 Retangulos e Círculos em regiões
+
+Visita 04/10
+-Tempo de duração do experimento
+-Definir unidade de tempo (minuto, hora...) de exportação do experimento
+-experimentos de 5 minutos em seções de 30 segundos a poucas semanas/24 horas por dia com seções de 1 hora
+-Oq uma zona tem que ter:
+    Label (nome) para a região
+    tempo de permanência do peixe
+    velocidade máxima e média
+    quantidade de saídas e entradas de zonas
+    momento em que o peixe entrou pela primeira vez
+-Regiões/ponto
+-Sequências: Determinar quando o peixe passa por uma configuração específica de regiões/ponto
+-Contar tempo de imobilidade, liminar em milisegundos
+-Período de aclimatação
+-Velocidade média real: média da velocidade durante os períodos em que o peixe estava se movimentando significativamente
+-Determinar estado imóvel e letárgico através de limiares de velocidade
+

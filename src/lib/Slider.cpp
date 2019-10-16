@@ -1,4 +1,4 @@
-#include "Slider.h"
+#include <include/Slider.h>
 
 Slider::Slider(Mat img_t, Mat img_f, Mat slm, void (*func)(bool &, void *), Point pos, int len, float bt_pos, Mat tela, void *var, int min, int max) : Botao(img_t, img_f, func, Point(pos.x, pos.y + len * bt_pos), tela, var),
                                                                                                                                                        slm(slm),
