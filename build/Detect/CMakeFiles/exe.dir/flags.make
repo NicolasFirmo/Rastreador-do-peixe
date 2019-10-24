@@ -6,5 +6,5 @@ CXX_FLAGS = -g   -std=c++1z
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I"/home/nicolas/dev/Rastrear peixe/src" -I"/home/nicolas/dev/Rastrear peixe/vendor" 
+CXX_INCLUDES = -I"/home/nicolas/dev/Rastrear peixe/src" -I"/home/nicolas/dev/Rastrear peixe/vendor" -isystem "/home/nicolas/dev/Rastrear peixe/vendor/OpenCV/Linux/include/opencv4" 
 

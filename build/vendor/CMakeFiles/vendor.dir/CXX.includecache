@@ -6,13 +6,3 @@
 
 #IncludeRegexTransform: 
 
-../vendor/include/vendor.h
-chrono
--
-string
--
-
-/home/nicolas/dev/Rastrear peixe/vendor/lib/vendor.cpp
-include/vendor.h
--
-

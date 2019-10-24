@@ -6,12 +6,13 @@ project( Rastreador )
 
 set(OpenCV_STATIC ON)
 set(BUILD_SHARED_LIBS OFF)
-set(OpenCV_DIR "/usr/local/lib")
+SET(OpenCV_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vendor/OpenCV/Linux/lib/cmake/opencv4")
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED PATHS "${CMAKE_CURRENT_SOURCE_DIR}/vendor/OpenCV/Linux/lib/cmake/opencv4")
 
-MESSAGE(STATUS "Include dirs ${OpenCV_INCLUDE_DIRS}")
-MESSAGE(STATUS "LINK LIBRARIES ${OpenCV_LIBS}")
+MESSAGE(STATUS "OpenCV_DIR ${OpenCV_DIR}")
+MESSAGE(STATUS "OpenCV Include dirs ${OpenCV_INCLUDE_DIRS}")
+MESSAGE(STATUS "OpenCV LINK LIBRARIES ${OpenCV_LIBS}")
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
