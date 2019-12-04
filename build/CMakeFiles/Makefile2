@@ -44,10 +44,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nicolas/dev/Rastrear peixe"
+CMAKE_SOURCE_DIR = /home/nicolas/Rastreador-do-peixe
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nicolas/dev/Rastrear peixe/build"
+CMAKE_BINARY_DIR = /home/nicolas/Rastreador-do-peixe/build
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -134,14 +134,14 @@ vendor/clean: vendor/CMakeFiles/vendor.dir/clean
 vendor/CMakeFiles/vendor.dir/all:
 	$(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/depend
 	$(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=9,10 "Built target vendor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=9,10 "Built target vendor"
 .PHONY : vendor/CMakeFiles/vendor.dir/all
 
 # Build rule for subdir invocation for target.
 vendor/CMakeFiles/vendor.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 2
 	$(MAKE) -f CMakeFiles/Makefile2 vendor/CMakeFiles/vendor.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : vendor/CMakeFiles/vendor.dir/rule
 
 # Convenience name for target.
@@ -161,14 +161,14 @@ vendor/CMakeFiles/vendor.dir/clean:
 src/CMakeFiles/fishtracker.dir/all: vendor/CMakeFiles/vendor.dir/all
 	$(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/depend
 	$(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=3,4,5,6,7,8 "Built target fishtracker"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=3,4,5,6,7,8 "Built target fishtracker"
 .PHONY : src/CMakeFiles/fishtracker.dir/all
 
 # Build rule for subdir invocation for target.
 src/CMakeFiles/fishtracker.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 8
 	$(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/fishtracker.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : src/CMakeFiles/fishtracker.dir/rule
 
 # Convenience name for target.
@@ -189,14 +189,14 @@ Detect/CMakeFiles/exe.dir/all: vendor/CMakeFiles/vendor.dir/all
 Detect/CMakeFiles/exe.dir/all: src/CMakeFiles/fishtracker.dir/all
 	$(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/depend
 	$(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=1,2 "Built target exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=1,2 "Built target exe"
 .PHONY : Detect/CMakeFiles/exe.dir/all
 
 # Build rule for subdir invocation for target.
 Detect/CMakeFiles/exe.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 10
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 10
 	$(MAKE) -f CMakeFiles/Makefile2 Detect/CMakeFiles/exe.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : Detect/CMakeFiles/exe.dir/rule
 
 # Convenience name for target.

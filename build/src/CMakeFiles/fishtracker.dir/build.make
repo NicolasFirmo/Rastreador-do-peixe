@@ -43,10 +43,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nicolas/dev/Rastrear peixe"
+CMAKE_SOURCE_DIR = /home/nicolas/Rastreador-do-peixe
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nicolas/dev/Rastrear peixe/build"
+CMAKE_BINARY_DIR = /home/nicolas/Rastreador-do-peixe/build
 
 # Include any dependencies generated for this target.
 include src/CMakeFiles/fishtracker.dir/depend.make
@@ -59,68 +59,68 @@ include src/CMakeFiles/fishtracker.dir/flags.make
 
 src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o: src/CMakeFiles/fishtracker.dir/flags.make
 src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o: ../src/lib/Botao.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Botao.cpp.o -c "/home/nicolas/dev/Rastrear peixe/src/lib/Botao.cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Botao.cpp.o -c /home/nicolas/Rastreador-do-peixe/src/lib/Botao.cpp
 
 src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fishtracker.dir/lib/Botao.cpp.i"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/nicolas/dev/Rastrear peixe/src/lib/Botao.cpp" > CMakeFiles/fishtracker.dir/lib/Botao.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nicolas/Rastreador-do-peixe/src/lib/Botao.cpp > CMakeFiles/fishtracker.dir/lib/Botao.cpp.i
 
 src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fishtracker.dir/lib/Botao.cpp.s"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/nicolas/dev/Rastrear peixe/src/lib/Botao.cpp" -o CMakeFiles/fishtracker.dir/lib/Botao.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nicolas/Rastreador-do-peixe/src/lib/Botao.cpp -o CMakeFiles/fishtracker.dir/lib/Botao.cpp.s
 
 src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o: src/CMakeFiles/fishtracker.dir/flags.make
 src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o: ../src/lib/GUI.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/GUI.cpp.o -c "/home/nicolas/dev/Rastrear peixe/src/lib/GUI.cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/GUI.cpp.o -c /home/nicolas/Rastreador-do-peixe/src/lib/GUI.cpp
 
 src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fishtracker.dir/lib/GUI.cpp.i"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/nicolas/dev/Rastrear peixe/src/lib/GUI.cpp" > CMakeFiles/fishtracker.dir/lib/GUI.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nicolas/Rastreador-do-peixe/src/lib/GUI.cpp > CMakeFiles/fishtracker.dir/lib/GUI.cpp.i
 
 src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fishtracker.dir/lib/GUI.cpp.s"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/nicolas/dev/Rastrear peixe/src/lib/GUI.cpp" -o CMakeFiles/fishtracker.dir/lib/GUI.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nicolas/Rastreador-do-peixe/src/lib/GUI.cpp -o CMakeFiles/fishtracker.dir/lib/GUI.cpp.s
 
 src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o: src/CMakeFiles/fishtracker.dir/flags.make
 src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o: ../src/lib/nicfunc.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o -c "/home/nicolas/dev/Rastrear peixe/src/lib/nicfunc.cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o -c /home/nicolas/Rastreador-do-peixe/src/lib/nicfunc.cpp
 
 src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/nicolas/dev/Rastrear peixe/src/lib/nicfunc.cpp" > CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nicolas/Rastreador-do-peixe/src/lib/nicfunc.cpp > CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i
 
 src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/nicolas/dev/Rastrear peixe/src/lib/nicfunc.cpp" -o CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nicolas/Rastreador-do-peixe/src/lib/nicfunc.cpp -o CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s
 
 src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o: src/CMakeFiles/fishtracker.dir/flags.make
 src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o: ../src/lib/Slider.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Slider.cpp.o -c "/home/nicolas/dev/Rastrear peixe/src/lib/Slider.cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Slider.cpp.o -c /home/nicolas/Rastreador-do-peixe/src/lib/Slider.cpp
 
 src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fishtracker.dir/lib/Slider.cpp.i"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/nicolas/dev/Rastrear peixe/src/lib/Slider.cpp" > CMakeFiles/fishtracker.dir/lib/Slider.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nicolas/Rastreador-do-peixe/src/lib/Slider.cpp > CMakeFiles/fishtracker.dir/lib/Slider.cpp.i
 
 src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fishtracker.dir/lib/Slider.cpp.s"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/nicolas/dev/Rastrear peixe/src/lib/Slider.cpp" -o CMakeFiles/fishtracker.dir/lib/Slider.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nicolas/Rastreador-do-peixe/src/lib/Slider.cpp -o CMakeFiles/fishtracker.dir/lib/Slider.cpp.s
 
 src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o: src/CMakeFiles/fishtracker.dir/flags.make
 src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o: ../src/lib/Switch.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Switch.cpp.o -c "/home/nicolas/dev/Rastrear peixe/src/lib/Switch.cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fishtracker.dir/lib/Switch.cpp.o -c /home/nicolas/Rastreador-do-peixe/src/lib/Switch.cpp
 
 src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fishtracker.dir/lib/Switch.cpp.i"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/nicolas/dev/Rastrear peixe/src/lib/Switch.cpp" > CMakeFiles/fishtracker.dir/lib/Switch.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nicolas/Rastreador-do-peixe/src/lib/Switch.cpp > CMakeFiles/fishtracker.dir/lib/Switch.cpp.i
 
 src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fishtracker.dir/lib/Switch.cpp.s"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && /usr/bin/g++-7 $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/nicolas/dev/Rastrear peixe/src/lib/Switch.cpp" -o CMakeFiles/fishtracker.dir/lib/Switch.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build/src && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nicolas/Rastreador-do-peixe/src/lib/Switch.cpp -o CMakeFiles/fishtracker.dir/lib/Switch.cpp.s
 
 # Object files for target fishtracker
 fishtracker_OBJECTS = \
@@ -140,9 +140,9 @@ src/libfishtracker.a: src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o
 src/libfishtracker.a: src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o
 src/libfishtracker.a: src/CMakeFiles/fishtracker.dir/build.make
 src/libfishtracker.a: src/CMakeFiles/fishtracker.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libfishtracker.a"
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && $(CMAKE_COMMAND) -P CMakeFiles/fishtracker.dir/cmake_clean_target.cmake
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fishtracker.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nicolas/Rastreador-do-peixe/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX static library libfishtracker.a"
+	cd /home/nicolas/Rastreador-do-peixe/build/src && $(CMAKE_COMMAND) -P CMakeFiles/fishtracker.dir/cmake_clean_target.cmake
+	cd /home/nicolas/Rastreador-do-peixe/build/src && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/fishtracker.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 src/CMakeFiles/fishtracker.dir/build: src/libfishtracker.a
@@ -150,10 +150,10 @@ src/CMakeFiles/fishtracker.dir/build: src/libfishtracker.a
 .PHONY : src/CMakeFiles/fishtracker.dir/build
 
 src/CMakeFiles/fishtracker.dir/clean:
-	cd "/home/nicolas/dev/Rastrear peixe/build/src" && $(CMAKE_COMMAND) -P CMakeFiles/fishtracker.dir/cmake_clean.cmake
+	cd /home/nicolas/Rastreador-do-peixe/build/src && $(CMAKE_COMMAND) -P CMakeFiles/fishtracker.dir/cmake_clean.cmake
 .PHONY : src/CMakeFiles/fishtracker.dir/clean
 
 src/CMakeFiles/fishtracker.dir/depend:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" "/home/nicolas/dev/Rastrear peixe" "/home/nicolas/dev/Rastrear peixe/src" "/home/nicolas/dev/Rastrear peixe/build" "/home/nicolas/dev/Rastrear peixe/build/src" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/DependInfo.cmake" --color=$(COLOR)
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nicolas/Rastreador-do-peixe /home/nicolas/Rastreador-do-peixe/src /home/nicolas/Rastreador-do-peixe/build /home/nicolas/Rastreador-do-peixe/build/src /home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : src/CMakeFiles/fishtracker.dir/depend
 

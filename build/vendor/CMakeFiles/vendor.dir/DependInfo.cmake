@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/nicolas/dev/Rastrear peixe/vendor/lib/vendor.cpp" "/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/vendor/lib/vendor.cpp" "/home/nicolas/Rastreador-do-peixe/build/vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

@@ -4,11 +4,11 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/nicolas/dev/Rastrear peixe/src/lib/Botao.cpp" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o"
-  "/home/nicolas/dev/Rastrear peixe/src/lib/GUI.cpp" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o"
-  "/home/nicolas/dev/Rastrear peixe/src/lib/Slider.cpp" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o"
-  "/home/nicolas/dev/Rastrear peixe/src/lib/Switch.cpp" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o"
-  "/home/nicolas/dev/Rastrear peixe/src/lib/nicfunc.cpp" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/src/lib/Botao.cpp" "/home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/src/lib/GUI.cpp" "/home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/src/lib/Slider.cpp" "/home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/src/lib/Switch.cpp" "/home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o"
+  "/home/nicolas/Rastreador-do-peixe/src/lib/nicfunc.cpp" "/home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -21,7 +21,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/vendor.dir/DependInfo.cmake"
+  "/home/nicolas/Rastreador-do-peixe/build/vendor/CMakeFiles/vendor.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

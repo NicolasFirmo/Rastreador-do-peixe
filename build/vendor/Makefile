@@ -48,10 +48,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nicolas/dev/Rastrear peixe"
+CMAKE_SOURCE_DIR = /home/nicolas/Rastreador-do-peixe
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nicolas/dev/Rastrear peixe/build"
+CMAKE_BINARY_DIR = /home/nicolas/Rastreador-do-peixe/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" "/home/nicolas/dev/Rastrear peixe/build/vendor/CMakeFiles/progress.marks"
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 vendor/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles /home/nicolas/Rastreador-do-peixe/build/vendor/CMakeFiles/progress.marks
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 vendor/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 vendor/clean
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 vendor/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 vendor/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 vendor/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 vendor/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 vendor/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 vendor/CMakeFiles/vendor.dir/rule:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 vendor/CMakeFiles/vendor.dir/rule
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 vendor/CMakeFiles/vendor.dir/rule
 .PHONY : vendor/CMakeFiles/vendor.dir/rule
 
 # Convenience name for target.
@@ -122,7 +122,7 @@ vendor: vendor/CMakeFiles/vendor.dir/rule
 
 # fast build rule for target.
 vendor/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/build
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/build
 .PHONY : vendor/fast
 
 lib/vendor.o: lib/vendor.cpp.o
@@ -131,7 +131,7 @@ lib/vendor.o: lib/vendor.cpp.o
 
 # target to build an object file
 lib/vendor.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.o
 .PHONY : lib/vendor.cpp.o
 
 lib/vendor.i: lib/vendor.cpp.i
@@ -140,7 +140,7 @@ lib/vendor.i: lib/vendor.cpp.i
 
 # target to preprocess a source file
 lib/vendor.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.i
 .PHONY : lib/vendor.cpp.i
 
 lib/vendor.s: lib/vendor.cpp.s
@@ -149,7 +149,7 @@ lib/vendor.s: lib/vendor.cpp.s
 
 # target to generate assembly for a file
 lib/vendor.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f vendor/CMakeFiles/vendor.dir/build.make vendor/CMakeFiles/vendor.dir/lib/vendor.cpp.s
 .PHONY : lib/vendor.cpp.s
 
 # Help Target
@@ -175,6 +175,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

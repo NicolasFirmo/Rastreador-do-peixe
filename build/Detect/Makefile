@@ -48,10 +48,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nicolas/dev/Rastrear peixe"
+CMAKE_SOURCE_DIR = /home/nicolas/Rastreador-do-peixe
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nicolas/dev/Rastrear peixe/build"
+CMAKE_BINARY_DIR = /home/nicolas/Rastreador-do-peixe/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" "/home/nicolas/dev/Rastrear peixe/build/Detect/CMakeFiles/progress.marks"
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 Detect/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles /home/nicolas/Rastreador-do-peixe/build/Detect/CMakeFiles/progress.marks
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 Detect/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 Detect/clean
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 Detect/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 Detect/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 Detect/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 Detect/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 Detect/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 Detect/CMakeFiles/exe.dir/rule:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 Detect/CMakeFiles/exe.dir/rule
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 Detect/CMakeFiles/exe.dir/rule
 .PHONY : Detect/CMakeFiles/exe.dir/rule
 
 # Convenience name for target.
@@ -122,7 +122,7 @@ exe: Detect/CMakeFiles/exe.dir/rule
 
 # fast build rule for target.
 exe/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/build
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/build
 .PHONY : exe/fast
 
 Detector.o: Detector.cpp.o
@@ -131,7 +131,7 @@ Detector.o: Detector.cpp.o
 
 # target to build an object file
 Detector.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.o
 .PHONY : Detector.cpp.o
 
 Detector.i: Detector.cpp.i
@@ -140,7 +140,7 @@ Detector.i: Detector.cpp.i
 
 # target to preprocess a source file
 Detector.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.i
 .PHONY : Detector.cpp.i
 
 Detector.s: Detector.cpp.s
@@ -149,7 +149,7 @@ Detector.s: Detector.cpp.s
 
 # target to generate assembly for a file
 Detector.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f Detect/CMakeFiles/exe.dir/build.make Detect/CMakeFiles/exe.dir/Detector.cpp.s
 .PHONY : Detector.cpp.s
 
 # Help Target
@@ -175,6 +175,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

@@ -48,10 +48,10 @@ RM = /usr/local/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "/home/nicolas/dev/Rastrear peixe"
+CMAKE_SOURCE_DIR = /home/nicolas/Rastreador-do-peixe
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "/home/nicolas/dev/Rastrear peixe/build"
+CMAKE_BINARY_DIR = /home/nicolas/Rastreador-do-peixe/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" "/home/nicolas/dev/Rastrear peixe/build/src/CMakeFiles/progress.marks"
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 src/all
-	$(CMAKE_COMMAND) -E cmake_progress_start "/home/nicolas/dev/Rastrear peixe/build/CMakeFiles" 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles /home/nicolas/Rastreador-do-peixe/build/src/CMakeFiles/progress.marks
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 src/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nicolas/Rastreador-do-peixe/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 src/clean
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 src/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,22 +97,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 src/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/CMakeFiles/fishtracker.dir/rule:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/fishtracker.dir/rule
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f CMakeFiles/Makefile2 src/CMakeFiles/fishtracker.dir/rule
 .PHONY : src/CMakeFiles/fishtracker.dir/rule
 
 # Convenience name for target.
@@ -122,7 +122,7 @@ fishtracker: src/CMakeFiles/fishtracker.dir/rule
 
 # fast build rule for target.
 fishtracker/fast:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/build
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/build
 .PHONY : fishtracker/fast
 
 lib/Botao.o: lib/Botao.cpp.o
@@ -131,7 +131,7 @@ lib/Botao.o: lib/Botao.cpp.o
 
 # target to build an object file
 lib/Botao.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.o
 .PHONY : lib/Botao.cpp.o
 
 lib/Botao.i: lib/Botao.cpp.i
@@ -140,7 +140,7 @@ lib/Botao.i: lib/Botao.cpp.i
 
 # target to preprocess a source file
 lib/Botao.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.i
 .PHONY : lib/Botao.cpp.i
 
 lib/Botao.s: lib/Botao.cpp.s
@@ -149,7 +149,7 @@ lib/Botao.s: lib/Botao.cpp.s
 
 # target to generate assembly for a file
 lib/Botao.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Botao.cpp.s
 .PHONY : lib/Botao.cpp.s
 
 lib/GUI.o: lib/GUI.cpp.o
@@ -158,7 +158,7 @@ lib/GUI.o: lib/GUI.cpp.o
 
 # target to build an object file
 lib/GUI.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.o
 .PHONY : lib/GUI.cpp.o
 
 lib/GUI.i: lib/GUI.cpp.i
@@ -167,7 +167,7 @@ lib/GUI.i: lib/GUI.cpp.i
 
 # target to preprocess a source file
 lib/GUI.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.i
 .PHONY : lib/GUI.cpp.i
 
 lib/GUI.s: lib/GUI.cpp.s
@@ -176,7 +176,7 @@ lib/GUI.s: lib/GUI.cpp.s
 
 # target to generate assembly for a file
 lib/GUI.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/GUI.cpp.s
 .PHONY : lib/GUI.cpp.s
 
 lib/Slider.o: lib/Slider.cpp.o
@@ -185,7 +185,7 @@ lib/Slider.o: lib/Slider.cpp.o
 
 # target to build an object file
 lib/Slider.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.o
 .PHONY : lib/Slider.cpp.o
 
 lib/Slider.i: lib/Slider.cpp.i
@@ -194,7 +194,7 @@ lib/Slider.i: lib/Slider.cpp.i
 
 # target to preprocess a source file
 lib/Slider.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.i
 .PHONY : lib/Slider.cpp.i
 
 lib/Slider.s: lib/Slider.cpp.s
@@ -203,7 +203,7 @@ lib/Slider.s: lib/Slider.cpp.s
 
 # target to generate assembly for a file
 lib/Slider.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Slider.cpp.s
 .PHONY : lib/Slider.cpp.s
 
 lib/Switch.o: lib/Switch.cpp.o
@@ -212,7 +212,7 @@ lib/Switch.o: lib/Switch.cpp.o
 
 # target to build an object file
 lib/Switch.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.o
 .PHONY : lib/Switch.cpp.o
 
 lib/Switch.i: lib/Switch.cpp.i
@@ -221,7 +221,7 @@ lib/Switch.i: lib/Switch.cpp.i
 
 # target to preprocess a source file
 lib/Switch.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.i
 .PHONY : lib/Switch.cpp.i
 
 lib/Switch.s: lib/Switch.cpp.s
@@ -230,7 +230,7 @@ lib/Switch.s: lib/Switch.cpp.s
 
 # target to generate assembly for a file
 lib/Switch.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/Switch.cpp.s
 .PHONY : lib/Switch.cpp.s
 
 lib/nicfunc.o: lib/nicfunc.cpp.o
@@ -239,7 +239,7 @@ lib/nicfunc.o: lib/nicfunc.cpp.o
 
 # target to build an object file
 lib/nicfunc.cpp.o:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.o
 .PHONY : lib/nicfunc.cpp.o
 
 lib/nicfunc.i: lib/nicfunc.cpp.i
@@ -248,7 +248,7 @@ lib/nicfunc.i: lib/nicfunc.cpp.i
 
 # target to preprocess a source file
 lib/nicfunc.cpp.i:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.i
 .PHONY : lib/nicfunc.cpp.i
 
 lib/nicfunc.s: lib/nicfunc.cpp.s
@@ -257,7 +257,7 @@ lib/nicfunc.s: lib/nicfunc.cpp.s
 
 # target to generate assembly for a file
 lib/nicfunc.cpp.s:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s
+	cd /home/nicolas/Rastreador-do-peixe/build && $(MAKE) -f src/CMakeFiles/fishtracker.dir/build.make src/CMakeFiles/fishtracker.dir/lib/nicfunc.cpp.s
 .PHONY : lib/nicfunc.cpp.s
 
 # Help Target
@@ -295,6 +295,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd "/home/nicolas/dev/Rastrear peixe/build" && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/nicolas/Rastreador-do-peixe/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
